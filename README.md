@@ -1,6 +1,6 @@
 
 **USERS API**
-@Post/api/v1/users/registration - For Users
+@Post/api/v1/users/registration - For Admin
 {
 	fullName: string,
 	email: string,
@@ -17,7 +17,7 @@
 	// pagination
 }
 
-@Get/api/v1/users/findUser (for user to find personalNumber) 
+@Get/api/v1/users/UsersPersonalNumber (for user to find personalNumber) 
 {
       // where userRole = user
 	// searchBy personalNumber 
@@ -121,5 +121,6 @@
 {     
       
 	//to delete existing account, deleted = true;
+	
 }
 
