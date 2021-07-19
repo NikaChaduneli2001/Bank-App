@@ -1,3 +1,4 @@
+import { Role } from 'src/enums/role.enum';
 import { Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm';
 
 @Entity('users')
@@ -19,6 +20,8 @@ export class UsersEntity {
     length: 250,
   })
   hash: string;
+  @Column('varchar')
+  role: Role;
   @Column('int')
   phone: number;
   @Column({
