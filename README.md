@@ -1,6 +1,6 @@
 
 **USERS API**
-@Post/api/v1/users/registration - For Users
+@Post/api/v1/users/registration - For Admin
 {
 	fullName: string,
 	email: string,
