@@ -1,5 +1,12 @@
 import { Role } from 'src/enums/role.enum';
-import { Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  Unique,
+} from 'typeorm';
+import { CompanyEntity } from './company.entity';
 
 @Entity('users')
 export class UsersEntity {
@@ -9,6 +16,8 @@ export class UsersEntity {
   @Column('varchar', {
     length: 100,
   })
+  @ManyToOne(() => CompanyEntity, (comp) => comp.id)
+  companyId: number | CompanyEntity;
   fullName: string;
   @Column('varchar', {
     length: 100,

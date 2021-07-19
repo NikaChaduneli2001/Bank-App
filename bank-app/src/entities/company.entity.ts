@@ -16,8 +16,6 @@ export class CompanyEntity {
     type: 'varchar',
     length: 100,
   })
-  @ManyToOne(() => UsersEntity, (user) => user.id)
-  userId: number | UsersEntity;
   comanyName: string;
   @Column({
     type: 'varchar',
