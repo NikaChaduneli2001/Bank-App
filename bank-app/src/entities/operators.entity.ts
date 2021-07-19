@@ -1,9 +1,9 @@
 import { Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm';
 
 @Entity('operators')
+@Unique(['email', 'personalNumber'])
 export class OperatorsEntity {
   @PrimaryGeneratedColumn()
-  @Unique(['email', 'personalNumber'])
   id: number;
   @Column('varchar', {
     length: 100,
@@ -22,10 +22,10 @@ export class OperatorsEntity {
   @Column('int')
   phone: number;
   @Column({
-    type: 'int',
+    type: 'varchar',
     length: 11,
   })
-  personalNumber: number;
+  personalNumber: string;
   @Column({
     type: 'boolean',
     default: false,

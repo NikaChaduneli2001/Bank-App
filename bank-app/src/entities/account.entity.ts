@@ -10,9 +10,9 @@ import { CompanyEntity } from './company.entity';
 import { UsersEntity } from './users.entity';
 
 @Entity('account')
+@Unique(['accountNumber', 'cardCode'])
 export class AccountEntity {
   @PrimaryGeneratedColumn()
-  @Unique(['accountNumber', 'cardCode'])
   id: number;
   @ManyToOne(() => UsersEntity, (user) => user.id, { eager: true })
   @JoinColumn({ name: 'userId' })

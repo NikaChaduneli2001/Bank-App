@@ -6,7 +6,6 @@ export class servicesInterface {
   id: number;
   userId: number | UsersEntity;
   accountId: number | AccountEntity;
-  companyName: string;
   description: string;
   price: number;
   type: Type;

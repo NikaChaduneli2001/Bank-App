@@ -9,9 +9,9 @@ import {
 import { CompanyEntity } from './company.entity';
 
 @Entity('users')
+@Unique(['email', 'personalNumber'])
 export class UsersEntity {
   @PrimaryGeneratedColumn()
-  @Unique(['email', 'personalNumber'])
   id: number;
   @Column('varchar', {
     length: 100,
@@ -34,10 +34,10 @@ export class UsersEntity {
   @Column('int')
   phone: number;
   @Column({
-    type: 'int',
+    type: 'varchar',
     length: 11,
   })
-  personalNumber: number;
+  personalNumber: string;
   @Column({
     type: 'boolean',
     default: false,

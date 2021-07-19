@@ -8,9 +8,9 @@ import {
 import { UsersEntity } from './users.entity';
 
 @Entity('company')
+@Unique(['email', 'personalNumber', 'cardCode'])
 export class CompanyEntity {
   @PrimaryGeneratedColumn()
-  @Unique(['email', 'personalNumber', 'cardCode'])
   id: number;
   @Column({
     type: 'varchar',
