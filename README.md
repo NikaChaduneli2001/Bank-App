@@ -1,3 +1,5 @@
+
+**USERS API**
 @Post/api/v1/users/registration - For Users
 {
 	fullName: string,
@@ -49,4 +51,74 @@
      //sort
      //searchBy
      //pagination
+}
+**SERVICE API**
+
+@Role.Admin
+@Post/api/v1/service/ - create new service for admin
+{
+	serviceName: string,
+	serviceType: enum,
+}
+
+
+@Get/api/v1/services/ 
+{      
+      //where deleted === false 
+	// sort
+	// searchBy
+	// pagination
+
+     }
+}
+
+
+
+@Role.operator
+@Patch/api/v1/service/:serviceId
+{     
+
+	//to update properties 
+     
+   
+}
+
+
+@Role.operator
+@Delete/api/v1/service/:serviceId
+{     
+      
+	//to delete service, deleted = true;
+}
+**ACCOUNT API**
+@Role.Admin
+@Post/api/v1/accounts/ - create new account for admin
+{
+	accountNumber: string,
+	cardCode: number,
+	balance: number, 
+        user: number, 
+}
+
+
+@Role.Admin
+@Get/api/v1/accounts/ 
+{      
+      //where deleted === false 
+	// sort
+	// searchBy
+	// pagination
+
+     }
+}
+
+
+
+
+
+@Role.Admin
+@Delete/api/v1/account/:accountId
+{     
+      
+	//to delete existing account, deleted = true;
 }
