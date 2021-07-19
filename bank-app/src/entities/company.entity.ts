@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  Unique,
+} from 'typeorm';
+import { UsersEntity } from './users.entity';
 
 @Entity('company')
 export class CompanyEntity {
@@ -9,6 +16,8 @@ export class CompanyEntity {
     type: 'varchar',
     length: 100,
   })
+  @ManyToOne(() => UsersEntity, (user) => user.id)
+  userId: number | UsersEntity;
   comanyName: string;
   @Column({
     type: 'varchar',

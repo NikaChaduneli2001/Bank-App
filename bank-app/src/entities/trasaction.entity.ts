@@ -1,3 +1,4 @@
+import { transactionType } from 'src/enums/transaction-type.enum';
 import { Column, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { AccountEntity } from './account.entity';
 import { ServicesEntity } from './services.entity';
@@ -24,6 +25,8 @@ export class TransactionEntity {
     length: 500,
   })
   description: string;
+  @Column('varchar')
+  role: transactionType;
   @Column({
     type: 'boolean',
     default: false,
