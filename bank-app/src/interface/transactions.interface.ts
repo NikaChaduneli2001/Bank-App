@@ -9,5 +9,6 @@ export class transactionInterface {
   serviceId: number | ServicesEntity;
   time: string;
   balance: number;
+  description: string;
   deleted: boolean;
 }

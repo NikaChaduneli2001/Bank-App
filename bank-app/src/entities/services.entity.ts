@@ -20,7 +20,9 @@ export class ServicesEntity {
   @JoinColumn({ name: 'accountId' })
   account: number | AccountEntity;
   @Column('varchar')
-  name: string;
+  companyName: string;
+  @Column('varchar')
+  description: string;
   @Column('float')
   price: number;
   @Column('varchar')

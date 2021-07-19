@@ -6,6 +6,7 @@ import {
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
+import { CompanyEntity } from './company.entity';
 import { UsersEntity } from './users.entity';
 
 @Entity('account')
@@ -16,6 +17,9 @@ export class AccountEntity {
   @ManyToOne(() => UsersEntity, (user) => user.id, { eager: true })
   @JoinColumn({ name: 'userId' })
   user: number | UsersEntity;
+  @ManyToOne(() => CompanyEntity, (company) => company.id, { eager: true })
+  @JoinColumn({ name: 'companyId' })
+  company: number | CompanyEntity;
   @Column('float')
   balance: number;
   @Column({

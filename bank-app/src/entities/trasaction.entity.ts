@@ -20,6 +20,11 @@ export class TransactionEntity {
   @Column('float')
   balance: number;
   @Column({
+    type: 'varchar',
+    length: 500,
+  })
+  description: string;
+  @Column({
     type: 'boolean',
     default: false,
   })
