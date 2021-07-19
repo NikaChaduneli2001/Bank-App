@@ -74,7 +74,7 @@
 
 
 
-@Role.operator
+@Role.Admin
 @Patch/api/v1/service/:serviceId
 {     
 
@@ -84,7 +84,7 @@
 }
 
 
-@Role.operator
+@Role.Admin
 @Delete/api/v1/service/:serviceId
 {     
       
