@@ -17,7 +17,7 @@
 	// pagination
 }
 
-@Get/api/v1/users/findUser (for user to find personalNumber) 
+@Get/api/v1/users/UsersPersonalNumber (for user to find personalNumber) 
 {
       // where userRole = user
 	// searchBy personalNumber 
