@@ -27,7 +27,7 @@ import { UsersModule } from './modules/users/users.module';
         TransactionEntity,
         UsersEntity,
       ],
-      synchronize: false,
+      synchronize: true,
     }),
     UsersModule,
     AuthModule,

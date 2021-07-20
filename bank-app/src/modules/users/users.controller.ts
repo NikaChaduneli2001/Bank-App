@@ -1,7 +1,6 @@
-import { Body, Delete, Get, Param, Post, Query, Req } from '@nestjs/common';
+import { Body, Delete, Get, Post, Req } from '@nestjs/common';
 import { Put } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
-import { find } from 'rxjs';
 import { getAllUsersDto } from 'src/dto/get-all-users.dto';
 import { registerUsersDto } from 'src/dto/register-users.dto';
 import { usersInterface } from 'src/interface/users.interface';
@@ -18,9 +17,7 @@ export class UsersController {
   async registerUser(@Body() data: registerUsersDto) {
     try {
       const user = await this.usersService.registerUser(data);
-      if (!user) {
-        return getErrorMessage('Could Not Register User With given params');
-      } else {
+      if (user) {
         return getSuccessMessage(user);
       }
     } catch {

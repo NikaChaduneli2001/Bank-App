@@ -27,6 +27,7 @@ export class UsersMysqlService {
     newUser.time = data.time;
     newUser.deleted = false;
     const user = await this.usersRepository.save(newUser);
+    console.log('user', user);
     return {
       // use cardCode
       id: user.id,
@@ -64,7 +65,6 @@ export class UsersMysqlService {
         UsersFullName: `%${this.escapeLikeString(data.searchBy.fullName)}%`,
       });
     } else if (data.searchBy.email) {
-      4;
       query.andWhere('email like :UsersEmail', {
         UsersEmail: `%${data.searchBy.email}%`,
       });
@@ -90,9 +90,9 @@ export class UsersMysqlService {
       const page = data.page - 1;
       query.offset(page * limit);
     }
-    const resilt = await query.getMany();
-    if (resilt) {
-      return resilt.map((user) => ({
+    const result = await query.getMany();
+    if (result) {
+      return result.map((user) => ({
         id: user.id,
         fullName: user.fullName,
         email: user.email,

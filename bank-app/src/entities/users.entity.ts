@@ -2,6 +2,7 @@ import { Role } from 'src/enums/role.enum';
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   Unique,
@@ -17,7 +18,8 @@ export class UsersEntity {
     length: 100,
   })
   @ManyToOne(() => CompanyEntity, (comp) => comp.id)
-  companyId: number | CompanyEntity;
+  @JoinColumn({ name: 'companyId' })
+  company: number | CompanyEntity;
   fullName: string;
   @Column('varchar', {
     length: 100,

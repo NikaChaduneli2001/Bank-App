@@ -5,10 +5,9 @@ import {
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
-import { UsersEntity } from './users.entity';
 
 @Entity('company')
-@Unique(['email', 'personalNumber', 'cardCode'])
+@Unique(['email', 'personalNumber'])
 export class CompanyEntity {
   @PrimaryGeneratedColumn()
   id: number;
@@ -28,7 +27,7 @@ export class CompanyEntity {
   })
   password: string;
   @Column({
-    type: 'int',
+    type: 'varchar',
     length: 11,
   })
   personalNumber: number;

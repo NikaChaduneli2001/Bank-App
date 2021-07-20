@@ -1,28 +1,24 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { getAllUsersDto } from 'src/dto/get-all-users.dto';
 import { registerUsersDto } from 'src/dto/register-users.dto';
-import { UsersEntity } from 'src/entities/users.entity';
 import { usersInterface } from 'src/interface/users.interface';
 import { UsersMysqlService } from '../repositories/users/users_mysql.repository';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    @InjectRepository(UsersEntity)
-    private readonly usersRepository: UsersMysqlService,
-  ) {}
+  constructor(private readonly usersRepo: UsersMysqlService) {}
 
   async registerUser(data: registerUsersDto) {
     try {
-      return await this.usersRepository.registerUser(data);
+      const result = await this.usersRepo.registerUser(data);
+      return result;
     } catch {
       return null;
     }
   }
   async getUserByPersonalNumber(data: usersInterface) {
     try {
-      return await this.usersRepository.getUserByPersonalNumber(
+      return await this.usersRepo.getUserByPersonalNumber(
         data.personalNumber,
       );
     } catch {
@@ -32,7 +28,7 @@ export class UsersService {
 
   async getAllUser(data: getAllUsersDto) {
     try {
-      return await this.usersRepository.getAllUser(data);
+      return await this.usersRepo.getAllUser(data);
     } catch {
       return null;
     }
@@ -40,7 +36,7 @@ export class UsersService {
 
   async deleteUser(id: number) {
     try {
-      return await this.usersRepository.deleteUser(Number(id));
+      return await this.usersRepo.deleteUser(Number(id));
     } catch {
       return null;
     }
@@ -48,7 +44,7 @@ export class UsersService {
 
   async updateUser(id: number, data: usersInterface) {
     try {
-      return await this.usersRepository.updateUser(Number(id), data);
+      return await this.usersRepo.updateUser(Number(id), data);
     } catch {
       return null;
     }

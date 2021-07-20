@@ -28,8 +28,7 @@ export class AccountEntity {
   })
   accountNumber: string;
   @Column({
-    type: 'int',
-    length: 16,
+    type: 'int'
   })
   cardCode: number;
   @Column({
