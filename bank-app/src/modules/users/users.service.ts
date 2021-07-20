@@ -45,4 +45,12 @@ export class UsersService {
       return null;
     }
   }
+
+  async updateUser(id: number, data: usersInterface) {
+    try {
+      return await this.usersRepository.updateUser(Number(id), data);
+    } catch {
+      return null;
+    }
+  }
 }

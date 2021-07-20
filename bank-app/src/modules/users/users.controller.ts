@@ -1,4 +1,5 @@
 import { Body, Delete, Get, Param, Post, Query, Req } from '@nestjs/common';
+import { Put } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import { find } from 'rxjs';
 import { getAllUsersDto } from 'src/dto/get-all-users.dto';
@@ -70,6 +71,21 @@ export class UsersController {
       }
     } catch {
       return getErrorMessage('Could Not deleted user with given params');
+    }
+  }
+
+  @Put('/:id')
+  async updateUser(@Req() req, data: usersInterface) {
+    try {
+      const { user } = req;
+      const updated = await this.usersService.updateUser(user.id, data);
+      if (!updated) {
+        return getErrorMessage('Could nor updated user');
+      } else {
+        return getSuccessMessage(updated);
+      }
+    } catch {
+      return getErrorMessage('Could uodated user with given params');
     }
   }
 }

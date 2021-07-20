@@ -64,6 +64,7 @@ export class UsersMysqlService {
         UsersFullName: `%${this.escapeLikeString(data.searchBy.fullName)}%`,
       });
     } else if (data.searchBy.email) {
+      4;
       query.andWhere('email like :UsersEmail', {
         UsersEmail: `%${data.searchBy.email}%`,
       });
@@ -122,5 +123,21 @@ export class UsersMysqlService {
     } else {
       return null;
     }
+  }
+
+  async updateUser(id: number, user: usersInterface) {
+    await this.usersRepository.save({
+      id,
+      user,
+    });
+
+    const updatedUser = await this.usersRepository.findOne({ id });
+    return {
+      id: updatedUser.id,
+      fullName: updatedUser.fullName,
+      email: updatedUser.email,
+      role: updatedUser.role,
+      phone: updatedUser.phone,
+    };
   }
 }
