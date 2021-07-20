@@ -1,6 +1,8 @@
-import { Body, Post } from '@nestjs/common';
+import { Body, Delete, Get, Param, Post, Query, Req } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
+import { findUserByPersonalNumberDto } from 'src/dto/findBy-users.dto';
 import { registerUsersDto } from 'src/dto/register-users.dto';
+import { usersInterface } from 'src/interface/users.interface';
 import {
   getErrorMessage,
   getSuccessMessage,
@@ -21,6 +23,38 @@ export class UsersController {
       }
     } catch {
       return getErrorMessage('Could Not Register User with given params');
+    }
+  }
+  // For user
+  @Get('/:personalNumber')
+  async findUserByPersonalNumber(@Req() req) {
+    try {
+      const { user } = req;
+      const finduser = await this.usersService.getUserByPersonalNumber(
+        user.personalNumber,
+      );
+      if (!finduser) {
+        return getErrorMessage('user not found');
+      } else {
+        return getSuccessMessage(finduser);
+      }
+    } catch {
+      return getErrorMessage('Could Not Find User');
+    }
+  }
+  // For Admin
+  @Delete('/:id')
+  async deletedUser(@Req() req) {
+    try {
+      const { user } = req;
+      const deleted = await this.usersService.deleteUser(user.id);
+      if (!deleted) {
+        return getErrorMessage('Could Not deleted user');
+      } else {
+        return getSuccessMessage(deleted);
+      }
+    } catch {
+      return getErrorMessage('Could Not deleted user with given params');
     }
   }
 }

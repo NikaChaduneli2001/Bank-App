@@ -7,7 +7,7 @@ export class usersInterface {
   fullName: string;
   email: string;
   time: string;
-  hash: string;
+  password: string;
   role: Role;
   phone: number;
   personalNumber: number;

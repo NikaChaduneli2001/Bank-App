@@ -7,8 +7,8 @@ import { ServicesEntity } from './entities/services.entity';
 import { TransactionEntity } from './entities/trasaction.entity';
 import { UsersEntity } from './entities/users.entity';
 import { AuthModule } from './modules/auth/auth.module';
+import { UsersMysqlModule } from './modules/repositories/users/users_mysql.module';
 import { UsersModule } from './modules/users/users.module';
-
 
 @Module({
   imports: [
@@ -19,7 +19,14 @@ import { UsersModule } from './modules/users/users.module';
       username: 'root',
       password: 'Kobaroveli007',
       database: 'lvl_bank',
-      entities:[AccountEntity,CompanyEntity,OperatorsEntity,ServicesEntity,TransactionEntity,UsersEntity],
+      entities: [
+        AccountEntity,
+        CompanyEntity,
+        OperatorsEntity,
+        ServicesEntity,
+        TransactionEntity,
+        UsersEntity,
+      ],
       synchronize: false,
     }),
     UsersModule,
