@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { findUserByPersonalNumberDto } from 'src/dto/findBy-users.dto';
+import { getAllUsersDto } from 'src/dto/get-all-users.dto';
 import { registerUsersDto } from 'src/dto/register-users.dto';
 import { UsersEntity } from 'src/entities/users.entity';
 import { usersInterface } from 'src/interface/users.interface';
@@ -25,6 +25,14 @@ export class UsersService {
       return await this.usersRepository.getUserByPersonalNumber(
         data.personalNumber,
       );
+    } catch {
+      return null;
+    }
+  }
+
+  async getAllUser(data: getAllUsersDto) {
+    try {
+      return await this.usersRepository.getAllUser(data);
     } catch {
       return null;
     }

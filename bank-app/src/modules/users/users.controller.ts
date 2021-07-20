@@ -1,6 +1,7 @@
 import { Body, Delete, Get, Param, Post, Query, Req } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
-import { findUserByPersonalNumberDto } from 'src/dto/findBy-users.dto';
+import { find } from 'rxjs';
+import { getAllUsersDto } from 'src/dto/get-all-users.dto';
 import { registerUsersDto } from 'src/dto/register-users.dto';
 import { usersInterface } from 'src/interface/users.interface';
 import {
@@ -40,6 +41,20 @@ export class UsersController {
       }
     } catch {
       return getErrorMessage('Could Not Find User');
+    }
+  }
+  // FOR MANAGER
+  @Get()
+  async getUser(data: getAllUsersDto) {
+    try {
+      const findUser = await this.usersService.getAllUser(data);
+      if (!findUser) {
+        return getErrorMessage('Could Not found user');
+      } else {
+        return getSuccessMessage(findUser);
+      }
+    } catch {
+      return getErrorMessage('Could Not Find User with given params');
     }
   }
   // For Admin
