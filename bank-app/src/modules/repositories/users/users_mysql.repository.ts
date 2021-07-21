@@ -24,7 +24,7 @@ export class UsersMysqlService {
     newUser.fullName = data.fullName;
     newUser.phone = data.phone;
     newUser.personalNumber = data.personalNumber;
-    newUser.role = Role.User;
+    newUser.role = data.role;
     newUser.time = data.time;
     newUser.deleted = false;
     const user = await this.usersRepository.save(newUser);
@@ -63,15 +63,16 @@ export class UsersMysqlService {
     });
     if (!findUser) {
       return getErrorMessage('User not found');
+    } else {
+      return {
+        id: findUser.id,
+        fullName: findUser.fullName,
+        role: findUser.role,
+        email: findUser.email,
+        phone: findUser.phone,
+        personalNumber: findUser.personalNumber,
+      };
     }
-    return {
-      id: findUser.id,
-      fullName: findUser.fullName,
-      role: findUser.role,
-      email: findUser.email,
-      phone: findUser.phone,
-      personalNumber: findUser.personalNumber,
-    };
   }
   // for Admins
   async getAllUser(data: getAllUsersDto) {

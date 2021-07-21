@@ -9,7 +9,6 @@ export class UsersService {
   constructor(private readonly usersRepo: UsersMysqlService) {}
 
   async registerUser(data: registerUsersDto) {
-    console.log('gadawodebuli data', data);
     try {
       const result = await this.usersRepo.registerUser(data);
       return result;

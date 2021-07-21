@@ -43,7 +43,7 @@ export class UsersController {
     }
   }
   // only Admins
-  @Get(':personalNumber')
+  @Get('/admin/:personalNumber')
   async findUserByPersonalNumber(
     @Param('personalNumber') personalNumber: string,
   ) {
