@@ -10,6 +10,6 @@ export class usersInterface {
   password: string;
   role: Role;
   phone: number;
-  personalNumber: number;
+  personalNumber: string;
   deleted: boolean;
 }

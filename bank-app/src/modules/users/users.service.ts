@@ -9,6 +9,7 @@ export class UsersService {
   constructor(private readonly usersRepo: UsersMysqlService) {}
 
   async registerUser(data: registerUsersDto) {
+    console.log('gadawodebuli data', data);
     try {
       const result = await this.usersRepo.registerUser(data);
       return result;
@@ -16,11 +17,17 @@ export class UsersService {
       return null;
     }
   }
-  async getUserByPersonalNumber(data: usersInterface) {
+  async getUserByPersonalNumber(personalNumber: string) {
     try {
-      return await this.usersRepo.getUserByPersonalNumber(
-        data.personalNumber,
-      );
+      return await this.usersRepo.getUserByPersonalNumber(personalNumber);
+    } catch {
+      return null;
+    }
+  }
+
+  async findUserByPersonalNumber(personalNumber: string) {
+    try {
+      return await this.usersRepo.getUserByPersonalNumber(personalNumber);
     } catch {
       return null;
     }

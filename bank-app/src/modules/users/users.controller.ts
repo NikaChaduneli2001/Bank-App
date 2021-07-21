@@ -1,4 +1,4 @@
-import { Body, Delete, Get, Post, Req } from '@nestjs/common';
+import { Body, Delete, Get, Param, Post, Query, Req } from '@nestjs/common';
 import { Put } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import { getAllUsersDto } from 'src/dto/get-all-users.dto';
@@ -24,18 +24,37 @@ export class UsersController {
       return getErrorMessage('Could Not Register User with given params');
     }
   }
-  // For user
-  @Get('/:personalNumber')
-  async findUserByPersonalNumber(@Req() req) {
+  // Only user
+  @Get(':personalNumber')
+  async getUserByPersonalNumber(
+    @Param('personalNumber') personalNumber: string,
+  ) {
     try {
-      const { user } = req;
-      const finduser = await this.usersService.getUserByPersonalNumber(
-        user.personalNumber,
+      const findUser = await this.usersService.getUserByPersonalNumber(
+        personalNumber,
       );
-      if (!finduser) {
+      if (!findUser) {
         return getErrorMessage('user not found');
       } else {
-        return getSuccessMessage(finduser);
+        return getSuccessMessage(findUser);
+      }
+    } catch {
+      return getErrorMessage('Could Not Find User');
+    }
+  }
+  // only Admins
+  @Get(':personalNumber')
+  async findUserByPersonalNumber(
+    @Param('personalNumber') personalNumber: string,
+  ) {
+    try {
+      const user = await this.usersService.findUserByPersonalNumber(
+        personalNumber,
+      );
+      if (!user) {
+        return getErrorMessage('Could Not find user');
+      } else {
+        return getSuccessMessage(user);
       }
     } catch {
       return getErrorMessage('Could Not Find User');
@@ -43,7 +62,7 @@ export class UsersController {
   }
   // FOR MANAGER
   @Get()
-  async getUser(data: getAllUsersDto) {
+  async getUser(@Query() data: getAllUsersDto) {
     try {
       const findUser = await this.usersService.getAllUser(data);
       if (!findUser) {
@@ -56,11 +75,10 @@ export class UsersController {
     }
   }
   // For Admin
-  @Delete('/:id')
-  async deletedUser(@Req() req) {
+  @Delete(':id')
+  async deletedUser(@Param('id') id: number) {
     try {
-      const { user } = req;
-      const deleted = await this.usersService.deleteUser(user.id);
+      const deleted = await this.usersService.deleteUser(Number(id));
       if (!deleted) {
         return getErrorMessage('Could Not deleted user');
       } else {
@@ -71,11 +89,10 @@ export class UsersController {
     }
   }
 
-  @Put('/:id')
-  async updateUser(@Req() req, data: usersInterface) {
+  @Put(':id')
+  async updateUser(@Param('id') id: number, data: usersInterface) {
     try {
-      const { user } = req;
-      const updated = await this.usersService.updateUser(user.id, data);
+      const updated = await this.usersService.updateUser(id, data);
       if (!updated) {
         return getErrorMessage('Could nor updated user');
       } else {

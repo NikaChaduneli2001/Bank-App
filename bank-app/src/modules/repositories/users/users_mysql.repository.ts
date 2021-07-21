@@ -7,6 +7,7 @@ import * as bcrypt from 'bcrypt';
 import { usersInterface } from 'src/interface/users.interface';
 import { getErrorMessage } from 'src/utils/response-functions.utils';
 import { getAllUsersDto } from 'src/dto/get-all-users.dto';
+import { Role } from 'src/enums/role.enum';
 
 @Injectable()
 export class UsersMysqlService {
@@ -23,23 +24,21 @@ export class UsersMysqlService {
     newUser.fullName = data.fullName;
     newUser.phone = data.phone;
     newUser.personalNumber = data.personalNumber;
-    newUser.role = data.role;
+    newUser.role = Role.User;
     newUser.time = data.time;
     newUser.deleted = false;
     const user = await this.usersRepository.save(newUser);
-    console.log('user', user);
     return {
       // use cardCode
       id: user.id,
       fullName: user.fullName,
       email: user.email,
-      phone: user.phone,
       time: user.time,
       role: user.role,
     };
   }
-  // FOR USERS
-  async getUserByPersonalNumber(personalNumber: number) {
+  // ONLY USERS
+  async getUserByPersonalNumber(personalNumber: string) {
     const findUser = await this.usersRepository.findOne({
       where: { personalNumber: personalNumber },
     });
@@ -51,12 +50,30 @@ export class UsersMysqlService {
         id: findUser.id,
         fullName: findUser.fullName,
         role: findUser.role,
+        personalNumber: findUser.personalNumber,
       };
     } else {
       return null;
     }
   }
-
+  //FOR Admins
+  async findUserByPersonalNumber(personalNumber: string) {
+    const findUser = await this.usersRepository.findOne({
+      where: { personalNumber: personalNumber },
+    });
+    if (!findUser) {
+      return getErrorMessage('User not found');
+    }
+    return {
+      id: findUser.id,
+      fullName: findUser.fullName,
+      role: findUser.role,
+      email: findUser.email,
+      phone: findUser.phone,
+      personalNumber: findUser.personalNumber,
+    };
+  }
+  // for Admins
   async getAllUser(data: getAllUsersDto) {
     const query = await this.usersRepository.createQueryBuilder();
     query.where('deleted=false');
@@ -107,6 +124,7 @@ export class UsersMysqlService {
   escapeLikeString(raw: string): string {
     return raw.replace(/[\\%_]/g, '\\$&');
   }
+  //for Admins
   async deleteUser(id: number) {
     await this.usersRepository.save({
       id,
@@ -124,7 +142,7 @@ export class UsersMysqlService {
       return null;
     }
   }
-
+  // for Admins
   async updateUser(id: number, user: usersInterface) {
     await this.usersRepository.save({
       id,
@@ -138,6 +156,7 @@ export class UsersMysqlService {
       email: updatedUser.email,
       role: updatedUser.role,
       phone: updatedUser.phone,
+      personalNumber: updatedUser.personalNumber,
     };
   }
 }

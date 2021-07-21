@@ -14,12 +14,12 @@ import { CompanyEntity } from './company.entity';
 export class UsersEntity {
   @PrimaryGeneratedColumn()
   id: number;
-  @Column('varchar', {
-    length: 100,
-  })
   @ManyToOne(() => CompanyEntity, (comp) => comp.id)
   @JoinColumn({ name: 'companyId' })
   company: number | CompanyEntity;
+  @Column('varchar', {
+    length: 100,
+  })
   fullName: string;
   @Column('varchar', {
     length: 100,
