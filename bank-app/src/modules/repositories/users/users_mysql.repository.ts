@@ -37,7 +37,6 @@ export class UsersMysqlService {
       role: user.role,
     };
   }
-  // ONLY USERS
   async getUserByPersonalNumber(personalNumber: string) {
     const findUser = await this.usersRepository.findOne({
       where: { personalNumber: personalNumber },
@@ -65,14 +64,12 @@ export class UsersMysqlService {
       return null;
     }
     const isPasswordCorect = bcrypt.compare(password, user.hash);
-    console.log(isPasswordCorect);
     if (!isPasswordCorect) {
       return null;
     } else {
       return user;
     }
   }
-  //FOR Admins
   async findUserByPersonalNumber(personalNumber: string) {
     const findUser = await this.usersRepository.findOne({
       where: { personalNumber: personalNumber },
@@ -90,7 +87,6 @@ export class UsersMysqlService {
       };
     }
   }
-  // for Admins
   async getAllUser(data: getAllUsersDto) {
     const query = await this.usersRepository.createQueryBuilder();
     query.where('deleted=false');
@@ -141,7 +137,6 @@ export class UsersMysqlService {
   escapeLikeString(raw: string): string {
     return raw.replace(/[\\%_]/g, '\\$&');
   }
-  //for Admins
   async deleteUser(id: number) {
     await this.usersRepository.save({
       id,
@@ -159,7 +154,6 @@ export class UsersMysqlService {
       return null;
     }
   }
-  // for Admins
   async updateUser(id: number, user: usersInterface) {
     await this.usersRepository.save({
       id,

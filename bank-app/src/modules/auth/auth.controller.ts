@@ -18,12 +18,10 @@ export class AuthController {
         data.email,
         data.password,
       );
-      console.log(foundUser);
       if (!foundUser) {
         return getErrorMessage('Password or email not found');
       }
       const jwtToken = await this.authService.loginUser(foundUser);
-      console.log(jwtToken);
       return {
         status: 'success',
         data: {
