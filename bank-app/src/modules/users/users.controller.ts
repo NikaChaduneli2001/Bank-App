@@ -1,19 +1,34 @@
-import { Body, Delete, Get, Param, Post, Query, Req } from '@nestjs/common';
+import {
+  Body,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { Put } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import { getAllUsersDto } from 'src/dto/get-all-users.dto';
 import { registerUsersDto } from 'src/dto/register-users.dto';
+import { Role } from 'src/enums/role.enum';
 import { usersInterface } from 'src/interface/users.interface';
 import {
   getErrorMessage,
   getSuccessMessage,
 } from 'src/utils/response-functions.utils';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { Roles } from '../auth/roles.decorator';
+import { RolesGuard } from '../auth/roles.guard';
 import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
   @Post()
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async registerUser(@Body() data: registerUsersDto) {
     try {
       const user = await this.usersService.registerUser(data);
@@ -24,8 +39,10 @@ export class UsersController {
       return getErrorMessage('Could Not Register User with given params');
     }
   }
-  // Only user
+
   @Get(':personalNumber')
+  @Roles(Role.User)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async getUserByPersonalNumber(
     @Param('personalNumber') personalNumber: string,
   ) {
@@ -42,8 +59,10 @@ export class UsersController {
       return getErrorMessage('Could Not Find User');
     }
   }
-  // only Admins
+
   @Get('/admin/:personalNumber')
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async findUserByPersonalNumber(
     @Param('personalNumber') personalNumber: string,
   ) {
@@ -60,8 +79,9 @@ export class UsersController {
       return getErrorMessage('Could Not Find User');
     }
   }
-  // FOR MANAGER
   @Get()
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async getUser(@Query() data: getAllUsersDto) {
     try {
       const findUser = await this.usersService.getAllUser(data);
@@ -74,8 +94,9 @@ export class UsersController {
       return getErrorMessage('Could Not Find User with given params');
     }
   }
-  // For Admin
   @Delete(':id')
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async deletedUser(@Param('id') id: number) {
     try {
       const deleted = await this.usersService.deleteUser(Number(id));
@@ -90,6 +111,8 @@ export class UsersController {
   }
 
   @Put(':id')
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async updateUser(@Param('id') id: number, data: usersInterface) {
     try {
       const updated = await this.usersService.updateUser(id, data);

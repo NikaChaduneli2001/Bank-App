@@ -65,6 +65,7 @@ export class UsersMysqlService {
       return null;
     }
     const isPasswordCorect = bcrypt.compare(password, user.hash);
+    console.log(isPasswordCorect);
     if (!isPasswordCorect) {
       return null;
     } else {
