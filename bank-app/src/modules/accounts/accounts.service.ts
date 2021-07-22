@@ -15,7 +15,7 @@ export class AccountsService {
   }
   async printCreditInfo(cardCode: number) {
     try {
-      return await this.accountRepo.printCreditInfo(cardCode);
+      return await this.accountRepo.printCardInfo(cardCode);
     } catch {
       return null;
     }

@@ -1,5 +1,3 @@
-import { UsersEntity } from 'src/entities/users.entity';
-
 export class accountInterface {
   id: number;
   userId: number;

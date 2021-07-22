@@ -25,21 +25,18 @@ export class AccountsMysqlService {
       companyId: result.company,
       userId: result.user,
       balance: result.balance,
-      cardCode: await this.printCreditInfo(result.cardCode),
+      cardCode: await this.printCardInfo(result.cardCode),
       accountNumber: result.accountNumber,
     };
   }
-  async printCreditInfo(cardCode: number) {
-    let string = '';
-    let newStr = '';
-    let showNumbers = cardCode % 10000;
-    for (let i = 0; i < String(cardCode).length - 5; i++) {
-      string += String(cardCode[i]);
+  async printCardInfo(card: number) {
+    const showNumbers = card;
+    let hideNumbers = ' ';
+    for (let i = String(showNumbers).length - 5; i >= 0; i -= 1) {
+      hideNumbers += '*';
     }
-    for (let i = 0; i < string.length; i += 1) {
-      newStr += '*';
-    }
-    const result = newStr + showNumbers;
-    return result;
+    const show = showNumbers % 10000;
+    const creditInfo = hideNumbers + show;
+    return creditInfo;
   }
 }

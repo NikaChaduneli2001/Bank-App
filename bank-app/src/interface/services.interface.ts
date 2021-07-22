@@ -1,6 +1,4 @@
-import { AccountEntity } from 'src/entities/account.entity';
-import { UsersEntity } from 'src/entities/users.entity';
-import { Type } from 'src/enums/services-type.enum';
+import { Type } from '@nestjs/common';
 
 export class servicesInterface {
   id: number;

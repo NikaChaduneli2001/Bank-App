@@ -7,7 +7,6 @@ import * as bcrypt from 'bcrypt';
 import { usersInterface } from 'src/interface/users.interface';
 import { getErrorMessage } from 'src/utils/response-functions.utils';
 import { getAllUsersDto } from 'src/dto/get-all-users.dto';
-import { Role } from 'src/enums/role.enum';
 
 @Injectable()
 export class UsersMysqlService {
