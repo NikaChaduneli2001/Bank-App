@@ -2,8 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersEntity } from 'src/entities/users.entity';
-import { usersInterface } from 'src/interface/users.interface';
-import { Repository } from 'typeorm';
 
 @Injectable()
 export class AuthService {
@@ -20,7 +18,7 @@ export class AuthService {
       sub: user.id,
     };
     return {
-      access_token: this.jwtService.sign(payload),
+      access_token:await this.jwtService.sign(payload),
     };
   }
 }
