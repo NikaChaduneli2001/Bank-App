@@ -56,6 +56,21 @@ export class UsersMysqlService {
       return null;
     }
   }
+
+  async findUserByEmailAndPassword(email: string, password: string) {
+    const user = await this.usersRepository.findOne({
+      where: { email: email },
+    });
+    if (!user) {
+      return null;
+    }
+    const isPasswordCorect = bcrypt.compare(password, user.hash);
+    if (!isPasswordCorect) {
+      return null;
+    } else {
+      return user;
+    }
+  }
   //FOR Admins
   async findUserByPersonalNumber(personalNumber: string) {
     const findUser = await this.usersRepository.findOne({

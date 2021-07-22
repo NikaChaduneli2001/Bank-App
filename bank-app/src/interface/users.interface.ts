@@ -1,14 +1,11 @@
-import { CompanyEntity } from 'src/entities/company.entity';
-import { Role } from 'src/enums/role.enum';
-
 export class usersInterface {
   id: number;
-  companyId: number | CompanyEntity;
+  companyId: number;
   fullName: string;
   email: string;
   time: string;
   password: string;
-  role: Role;
+  role: string;
   phone: number;
   personalNumber: string;
   deleted: boolean;

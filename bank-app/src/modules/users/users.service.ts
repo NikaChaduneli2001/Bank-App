@@ -23,7 +23,13 @@ export class UsersService {
       return null;
     }
   }
-
+  async findUserByEmailAndPassword(email: string, password: string) {
+    try {
+      return await this.usersRepo.findUserByEmailAndPassword(email, password);
+    } catch {
+      return null;
+    }
+  }
   async findUserByPersonalNumber(personalNumber: string) {
     try {
       return await this.usersRepo.getUserByPersonalNumber(personalNumber);

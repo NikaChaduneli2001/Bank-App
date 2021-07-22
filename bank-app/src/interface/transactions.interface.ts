@@ -5,12 +5,12 @@ import { transactionType } from 'src/enums/transaction-type.enum';
 
 export class transactionInterface {
   id: number;
-  userId: number | UsersEntity;
-  accountId: number | AccountEntity;
-  serviceId: number | ServicesEntity;
+  userId: number;
+  accountId: number;
+  serviceId: number;
   time: string;
   balance: number;
-  role: transactionType;
+  role: string;
   description: string;
   deleted: boolean;
 }

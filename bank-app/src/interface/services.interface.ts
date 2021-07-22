@@ -4,8 +4,8 @@ import { Type } from 'src/enums/services-type.enum';
 
 export class servicesInterface {
   id: number;
-  userId: number | UsersEntity;
-  accountId: number | AccountEntity;
+  userId: number;
+  accountId: number;
   description: string;
   price: number;
   type: Type;
