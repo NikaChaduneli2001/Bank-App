@@ -105,4 +105,6 @@ export class AccountsMysqlService {
   escapeLikeString(raw: string): string {
     return raw.replace(/[\\%_]/g, '\\$&');
   }
+
+  
 }

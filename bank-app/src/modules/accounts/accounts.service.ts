@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { createAccountDto } from 'src/dto/create-accounts.dto';
+import { getAllAccountsDto } from 'src/dto/get-all.accounts.dto';
 import { AccountsMysqlService } from '../repositories/accounts/accounts_mysql.repository';
 
 @Injectable()
@@ -17,6 +18,14 @@ export class AccountsService {
   async printCreditInfo(cardCode: number) {
     try {
       return await this.accountRepo.printCardInfo(cardCode);
+    } catch {
+      return null;
+    }
+  }
+
+  async getAllAccounts(data:getAllAccountsDto) {
+    try {
+      return await this.accountRepo.getAllAccounts(data);
     } catch {
       return null;
     }
