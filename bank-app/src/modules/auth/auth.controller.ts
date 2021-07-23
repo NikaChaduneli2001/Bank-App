@@ -18,19 +18,18 @@ export class AuthController {
         data.email,
         data.password,
       );
-      if (!foundUser) {
-        return getErrorMessage('Password or email not found');
+      if (foundUser) {
+        const jwtToken = await this.authService.loginUser(foundUser);
+        return {
+          status: 'success',
+          data: {
+            email: foundUser.email,
+            fullName: foundUser.fullName,
+            role: foundUser.role,
+            jwtToken,
+          },
+        };
       }
-      const jwtToken = await this.authService.loginUser(foundUser);
-      return {
-        status: 'success',
-        data: {
-          email: foundUser.email,
-          fullName: foundUser.fullName,
-          role: foundUser.role,
-          jwtToken,
-        },
-      };
     } catch {
       return getErrorMessage('Password or Email is incorrect');
     }
