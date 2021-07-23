@@ -8,7 +8,8 @@ export class AccountsService {
 
   async createAccount(data: createAccountDto) {
     try {
-      return await this.accountRepo.createAccount(data);
+      const account = await this.accountRepo.createAccount(data);
+      return account;
     } catch {
       return null;
     }

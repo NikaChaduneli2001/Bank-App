@@ -9,7 +9,8 @@ import {
 
 export class createAccountDto {
   @IsInt()
-  userId: number;
+  @IsOptional()
+  userId?: number;
   @IsInt()
   @IsOptional()
   companyId?: number;

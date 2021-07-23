@@ -28,7 +28,7 @@ export class AccountEntity {
   })
   accountNumber: string;
   @Column({
-    type: 'varchar'
+    type: 'float',
   })
   cardCode: number;
   @Column({

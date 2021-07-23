@@ -12,22 +12,39 @@ export class AccountsMysqlService {
   ) {}
 
   async createAccount(data: createAccountDto) {
-    const newAccount: AccountEntity = new AccountEntity();
-    newAccount.user = data.userId;
-    newAccount.company = data.companyId;
-    newAccount.balance = data.balance;
-    newAccount.cardCode = data.cardCode;
-    newAccount.accountNumber = data.accountNumber;
-    newAccount.deleted = false;
-    const result = await this.accountsRepository.save(newAccount);
-    return {
-      id: result.id,
-      companyId: result.company,
-      userId: result.user,
-      balance: result.balance,
-      cardCode: await this.printCardInfo(result.cardCode),
-      accountNumber: result.accountNumber,
-    };
+    if (data.companyId) {
+      const newAccount = new AccountEntity();
+      newAccount.user = data.userId;
+      newAccount.company = data.companyId;
+      newAccount.balance = data.balance;
+      newAccount.cardCode = data.cardCode;
+      newAccount.accountNumber = data.accountNumber;
+      newAccount.deleted = false;
+      const result = await this.accountsRepository.save(newAccount);
+      return {
+        id: result.id,
+        companyId: result.company,
+        userId: result.user,
+        balance: result.balance,
+        cardCode: await this.printCardInfo(result.cardCode),
+        accountNumber: result.accountNumber,
+      };
+    } else {
+      const newAccount: AccountEntity = new AccountEntity();
+      newAccount.user = data.userId;
+      newAccount.balance = data.balance;
+      newAccount.cardCode = data.cardCode;
+      newAccount.accountNumber = data.accountNumber;
+      newAccount.deleted = false;
+      const result = await this.accountsRepository.save(newAccount);
+      return {
+        id: result.id,
+        userId: result.user,
+        balance: result.balance,
+        cardCode: await this.printCardInfo(result.cardCode),
+        accountNumber: result.accountNumber,
+      };
+    }
   }
   async printCardInfo(card: number) {
     const showNumbers = card;
