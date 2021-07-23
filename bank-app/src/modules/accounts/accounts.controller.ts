@@ -1,4 +1,4 @@
-import { Body, Get, Post, Query } from '@nestjs/common';
+import { Body, Delete, Get, Param, Post, Query } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import { createAccountDto } from 'src/dto/create-accounts.dto';
 import { getAllAccountsDto } from 'src/dto/get-all.accounts.dto';
@@ -33,6 +33,20 @@ export class AccountsController {
       }
     } catch {
       return getErrorMessage('Could not get account with given params');
+    }
+  }
+
+  @Delete(':id')
+  async deletedAccount(@Param('id') id: number) {
+    try {
+      const deleted = await this.accountService.deletedAccont(Number(id));
+      if (!deleted) {
+        return getErrorMessage('Could not delete account');
+      } else {
+        return getSuccessMessage(deleted);
+      }
+    } catch {
+      return getErrorMessage('Could not delete account with given params');
     }
   }
 }
