@@ -105,22 +105,6 @@ export class AccountsMysqlService {
   escapeLikeString(raw: string): string {
     return raw.replace(/[\\%_]/g, '\\$&');
   }
-  async deleteAccount(id: number) {
-    await this.accountsRepository.save({
-      id,
-      deleted: true,
-    });
-    const deleted = await this.accountsRepository.findOne(id);
-    if (deleted) {
-      return {
-        id: deleted.id,
-        account: deleted.accountNumber,
-        carcode: this.printCardInfo(deleted.cardCode),
-        balance: deleted.balance,
-        userId: deleted.user,
-      };
-    } else {
-      return null;
-    }
-  }
+
+  
 }

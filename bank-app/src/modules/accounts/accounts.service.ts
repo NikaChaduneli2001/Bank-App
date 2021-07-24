@@ -23,19 +23,13 @@ export class AccountsService {
     }
   }
 
-  async getAllAccounts(data: getAllAccountsDto) {
+  async getAllAccounts(data:getAllAccountsDto) {
     try {
       return await this.accountRepo.getAllAccounts(data);
     } catch {
       return null;
     }
   }
-
-  async deletedAccont(id: number) {
-    try {
-      return await this.deletedAccont(id);
-    } catch {
-      return null;
-    }
-  }
 }
+
+

@@ -18,7 +18,7 @@ import { AccountsModule } from './modules/accounts/accounts.module';
       host: 'localhost',
       port: 3306,
       username: 'root',
-      password: 'Kobaroveli007',
+      password: '577102125aA!', 
       database: 'lvl_bank',
       entities: [
         AccountEntity,
@@ -28,7 +28,7 @@ import { AccountsModule } from './modules/accounts/accounts.module';
         TransactionEntity,
         UsersEntity,
       ],
-      synchronize: false,
+      synchronize: true,
     }),
     UsersModule,
     AuthModule,
