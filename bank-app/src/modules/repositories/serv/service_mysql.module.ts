@@ -9,4 +9,4 @@ import { ServMySqlService } from './service_mysql.repository';
     providers: [ServMySqlService],
     exports: [ServMySqlService],
   })
-  export class servMySqlModule {}
+  export class ServMySqlModule {}
