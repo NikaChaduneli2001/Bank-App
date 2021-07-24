@@ -1,21 +1,24 @@
 import { Body, Delete, Get, Param, Post, Query } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import { createAccountDto } from 'src/dto/create-accounts.dto';
+import { CreateServiceDto } from 'src/dto/create-service.dto';
+import { GetAllServicesDto } from 'src/dto/get-all-service.dto';
 import { getAllAccountsDto } from 'src/dto/get-all.accounts.dto';
 import {
   getErrorMessage,
   getSuccessMessage,
 } from 'src/utils/response-functions.utils';
-import { AccountsService } from './serv.service';
+
+import { ServiceService } from './serv.service';
 
 @Controller('accounts')
-export class AccountsController {
-  constructor(private readonly accountService: AccountsService) {}
+export class ServiceController {
+  constructor(private readonly serviceService: ServiceService) {}
 
   @Post()
-  async createAccount(@Body() data: createAccountDto) {
+  async createAccount(@Body() data: CreateServiceDto) {
     try {
-      const newAccount = await this.accountService.createAccount(data);
+      const newAccount = await this.serviceService.createService(data);
       return getSuccessMessage(newAccount);
     } catch {
       return getErrorMessage('Could not create account');
@@ -23,9 +26,9 @@ export class AccountsController {
   }
 
   @Get()
-  async getAccount(@Query() data: getAllAccountsDto) {
+  async getAccount(@Query() data: GetAllServicesDto) {
     try {
-      const account = await this.accountService.getAllAccounts(data);
+      const account = await this.serviceService.getAllServices(data);
       if (!account) {
         return getErrorMessage('Could not get account');
       } else {
@@ -39,7 +42,7 @@ export class AccountsController {
   @Delete(':id')
   async deletedAccount(@Param('id') id: number) {
     try {
-      const deleted = await this.accountService.deletedAccont(Number(id));
+      const deleted = await this.serviceService.deleteService(Number(id));
       if (!deleted) {
         return getErrorMessage('Could not delete account');
       } else {

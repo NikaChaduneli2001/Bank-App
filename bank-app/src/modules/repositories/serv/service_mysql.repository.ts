@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateServiceDto } from 'src/dto/create-service.dto';
 import { GetAllServicesDto } from 'src/dto/get-all-service.dto';
+import { UpdateServiceDto } from 'src/dto/update-service.dto';
 import { ServicesEntity } from 'src/entities/services.entity';
 import { Repository } from 'typeorm';
 
@@ -76,6 +77,4 @@ export class ServMySqlService {
         });
         return deletedService; 
       }
-    }
-    
 }
