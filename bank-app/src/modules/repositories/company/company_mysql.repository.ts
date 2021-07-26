@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { getAllCompanyDto } from 'src/dto/get-all-company.dto';
 import { registerCompanyDto } from 'src/dto/register-company.dto';
 import { CompanyEntity } from 'src/entities/company.entity';
-import { companyInterface } from 'src/interface/company.interface';
+import { CompanyInterface } from 'src/interface/company.interface';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -33,10 +33,12 @@ export class CompanyMysqlService {
   async getAllCompany(data: getAllCompanyDto) {
     const query = await this.companyRepository.createQueryBuilder();
     query.where('deleted=false');
-    if (data.searchBy.companyName) {
-      query.andWhere('companyName like :CompanyName', {
-        CompanyName: `%${this.escapeLikeString(data.searchBy.companyName)}%`,
-      });
+    if (data.searchBy) {
+      if (data.searchBy.companyName) {
+        query.andWhere('companyName like :CompanyName', {
+          CompanyName: `%${this.escapeLikeString(data.searchBy.companyName)}%`,
+        });
+      }
     }
     if (data.sortBy) {
       query.orderBy(data.sortBy, data.sortDir);
@@ -83,7 +85,7 @@ export class CompanyMysqlService {
     }
   }
 
-  async updateCompany(id: number, data: companyInterface) {
+  async updateCompany(id: number, data: CompanyInterface) {
     await this.companyRepository.save({
       id,
       ...data,

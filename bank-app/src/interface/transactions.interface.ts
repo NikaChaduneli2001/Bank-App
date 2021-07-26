@@ -1,4 +1,4 @@
-export class transactionInterface {
+export class TransactionInterface {
   id: number;
   userId: number;
   accountId: number;

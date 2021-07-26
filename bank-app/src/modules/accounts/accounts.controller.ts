@@ -13,7 +13,7 @@ import { Controller } from '@nestjs/common';
 import { createAccountDto } from 'src/dto/create-accounts.dto';
 import { getAllAccountsDto } from 'src/dto/get-all.accounts.dto';
 import { Role } from 'src/enums/role.enum';
-import { accountInterface } from 'src/interface/account.interface';
+import { AccountInterface } from 'src/interface/account.interface';
 import {
   getErrorMessage,
   getSuccessMessage,
@@ -88,7 +88,7 @@ export class AccountsController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   async updateAccount(
     @Param('id') id: number,
-    @Body() data: accountInterface,
+    @Body() data: AccountInterface,
     @Req() req,
   ) {
     try {

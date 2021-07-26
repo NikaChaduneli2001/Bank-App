@@ -1,5 +1,5 @@
-export class companyInterface {
+export class CompanyInterface {
   id: number;
-  comanyName: string;
+  companyName: string;
   email: string;
 }

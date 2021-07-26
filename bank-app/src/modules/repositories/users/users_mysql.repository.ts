@@ -4,7 +4,7 @@ import { registerUsersDto } from 'src/dto/register-users.dto';
 import { UsersEntity } from 'src/entities/users.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { usersInterface } from 'src/interface/users.interface';
+import { UsersInterface } from 'src/interface/users.interface';
 import { getErrorMessage } from 'src/utils/response-functions.utils';
 import { getAllUsersDto } from 'src/dto/get-all-users.dto';
 import { AccountEntity } from 'src/entities/account.entity';
@@ -90,22 +90,24 @@ export class UsersMysqlService {
   async getAllUser(data: getAllUsersDto) {
     const query = await this.usersRepository.createQueryBuilder();
     query.where('deleted=false');
-    if (data.searchBy.fullName) {
-      query.andWhere('fullName like :UsersFullName', {
-        UsersFullName: `%${this.escapeLikeString(data.searchBy.fullName)}%`,
-      });
-    } else if (data.searchBy.email) {
-      query.andWhere('email like :UsersEmail', {
-        UsersEmail: `%${data.searchBy.email}%`,
-      });
-    } else if (data.searchBy.role) {
-      query.andWhere('role like :UsersRole', {
-        UsersRole: `%${this.escapeLikeString(data.searchBy.role)}%`,
-      });
-    } else if (data.searchBy.personalNumber) {
-      query.andWhere('personalNumber like :UsersPersonalNumber', {
-        UsersPersonalNumber: `%${data.searchBy.personalNumber}%`,
-      });
+    if (data.searchBy) {
+      if (data.searchBy.fullName) {
+        query.andWhere('fullName like :UsersFullName', {
+          UsersFullName: `%${this.escapeLikeString(data.searchBy.fullName)}%`,
+        });
+      } else if (data.searchBy.email) {
+        query.andWhere('email like :UsersEmail', {
+          UsersEmail: `%${data.searchBy.email}%`,
+        });
+      } else if (data.searchBy.role) {
+        query.andWhere('role like :UsersRole', {
+          UsersRole: `%${this.escapeLikeString(data.searchBy.role)}%`,
+        });
+      } else if (data.searchBy.personalNumber) {
+        query.andWhere('personalNumber like :UsersPersonalNumber', {
+          UsersPersonalNumber: `%${data.searchBy.personalNumber}%`,
+        });
+      }
     }
 
     if (data.sortBy) {
@@ -154,7 +156,7 @@ export class UsersMysqlService {
       return null;
     }
   }
-  async updateUser(id: number, user: usersInterface) {
+  async updateUser(id: number, user: UsersInterface) {
     await this.usersRepository.save({
       id,
       user,

@@ -12,7 +12,7 @@ import { Controller } from '@nestjs/common';
 import { getAllUsersDto } from 'src/dto/get-all-users.dto';
 import { registerUsersDto } from 'src/dto/register-users.dto';
 import { Role } from 'src/enums/role.enum';
-import { usersInterface } from 'src/interface/users.interface';
+import { UsersInterface } from 'src/interface/users.interface';
 import {
   getErrorMessage,
   getSuccessMessage,
@@ -112,7 +112,7 @@ export class UsersController {
   @Put(':id')
   @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  async updateUser(@Param('id') id: number, @Body() data: usersInterface) {
+  async updateUser(@Param('id') id: number, @Body() data: UsersInterface) {
     try {
       const updated = await this.usersService.updateUser(id, data);
       if (!updated) {

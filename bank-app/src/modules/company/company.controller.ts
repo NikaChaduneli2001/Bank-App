@@ -5,7 +5,7 @@ import { Controller } from '@nestjs/common';
 import { getAllCompanyDto } from 'src/dto/get-all-company.dto';
 import { getAllAccountsDto } from 'src/dto/get-all.accounts.dto';
 import { registerCompanyDto } from 'src/dto/register-company.dto';
-import { companyInterface } from 'src/interface/company.interface';
+import { CompanyInterface } from 'src/interface/company.interface';
 import {
   getErrorMessage,
   getSuccessMessage,
@@ -57,7 +57,7 @@ export class CompanyController {
   }
 
   @Put(':id')
-  async updateCompany(@Param('id') id: number, @Body() data: companyInterface) {
+  async updateCompany(@Param('id') id: number, @Body() data: CompanyInterface) {
     try {
       const updated = await this.companyService.updateCompany(id, data);
       if (!updated) {

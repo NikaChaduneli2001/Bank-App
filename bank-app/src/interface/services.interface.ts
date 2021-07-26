@@ -1,6 +1,6 @@
 import { Type } from '@nestjs/common';
 
-export class servicesInterface {
+export class ServicesInterface {
   id: number;
   userId: number;
   accountId: number;

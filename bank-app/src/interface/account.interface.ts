@@ -1,4 +1,4 @@
-export class accountInterface {
+export class AccountInterface {
   id: number;
   userId: number;
   companyId: number;
