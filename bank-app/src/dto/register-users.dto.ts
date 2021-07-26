@@ -25,6 +25,8 @@ export class registerUsersDto {
   role: Role;
   @IsNumber()
   phone: number;
+  @IsNumber()
+  cardCode: number;
   @IsString()
   personalNumber: string;
   @IsBoolean()

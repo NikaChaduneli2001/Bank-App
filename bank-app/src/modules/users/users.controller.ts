@@ -59,7 +59,7 @@ export class UsersController {
     }
   }
 
-  @Get('/admin/:personalNumber')
+  @Get('admin/:personalNumber')
   @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async findUserByPersonalNumber(

@@ -7,6 +7,7 @@ import * as bcrypt from 'bcrypt';
 import { usersInterface } from 'src/interface/users.interface';
 import { getErrorMessage } from 'src/utils/response-functions.utils';
 import { getAllUsersDto } from 'src/dto/get-all-users.dto';
+import { AccountEntity } from 'src/entities/account.entity';
 
 @Injectable()
 export class UsersMysqlService {
@@ -17,7 +18,7 @@ export class UsersMysqlService {
 
   async registerUser(data: registerUsersDto) {
     const salt = await bcrypt.genSalt();
-    const newUser: UsersEntity = new UsersEntity();
+    const newUser = new UsersEntity();
     newUser.email = data.email;
     newUser.hash = await bcrypt.hash(data.password, salt);
     newUser.fullName = data.fullName;
@@ -28,7 +29,6 @@ export class UsersMysqlService {
     newUser.deleted = false;
     const user = await this.usersRepository.save(newUser);
     return {
-      // use cardCode
       id: user.id,
       fullName: user.fullName,
       email: user.email,
@@ -36,6 +36,7 @@ export class UsersMysqlService {
       role: user.role,
     };
   }
+
   async getUserByPersonalNumber(personalNumber: string) {
     const findUser = await this.usersRepository.findOne({
       where: { personalNumber: personalNumber },

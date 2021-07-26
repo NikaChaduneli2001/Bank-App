@@ -60,9 +60,22 @@ export class AccountsMysqlService {
     return creditInfo;
   }
 
+  async accountBelongsToUser(accountId: number, userId: number) {
+    const result = await this.accountsRepository
+      .createQueryBuilder()
+      .where('id=:accountId', { accountId: accountId })
+      .andWhere('userId=:userId', { userId })
+      .getCount();
+    if (result > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   async getAllAccounts(data: getAllAccountsDto) {
-    const query = await this.accountsRepository.createQueryBuilder();
-    query.where('deleted=false');
+    const query = await this.accountsRepository.createQueryBuilder('account');
+    query.where('account.deleted=false');
     if (data.searchBy.cardCode) {
       query.andWhere('cardCode like :AccountCardCode', {
         AccountCardCode: `%${this.escapeLikeString(data.searchBy.cardCode)}%`,
@@ -77,6 +90,17 @@ export class AccountsMysqlService {
       query.andWhere('userId like :UserId', {
         UserId: `${data.searchBy.userId}`,
       });
+    } else if (data.searchBy.companyId) {
+      query.andWhere('companyId like :CompanyId', {
+        companyId: `${data.searchBy.companyId}`,
+      });
+    }
+    if (data.searchBy.userId) {
+      query.leftJoinAndSelect('account.user', 'userId');
+      query.select(['account.fullName', 'account.email', 'account.role']);
+    } else if (data.searchBy.companyId) {
+      query.leftJoinAndSelect('account.company', 'companyId');
+      query.select(['account.fullName', 'account.email', 'account.role']);
     }
 
     if (data.sortBy) {
@@ -161,6 +185,27 @@ export class AccountsMysqlService {
         cardCode: this.printCardInfo(result.cardCode),
         accountNumber: result.accountNumber,
         userId: result.user,
+      }));
+    } else {
+      return false;
+    }
+  }
+
+  async getCompanyAccount(companyId: number) {
+    const result = await this.accountsRepository
+      .createQueryBuilder()
+      .leftJoinAndSelect('company', 'companyId')
+      .where('deleted=false')
+      .andWhere('company=:companyId', { companyId: companyId })
+      .select(['fullName', 'email'])
+      .getMany();
+    if (result) {
+      return await result.map((result) => ({
+        id: result.id,
+        balance: result.balance,
+        cardCode: this.printCardInfo(result.cardCode),
+        accountNumber: result.accountNumber,
+        companyId: result.company,
       }));
     } else {
       return false;

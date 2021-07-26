@@ -28,7 +28,13 @@ export class AccountsService {
       return null;
     }
   }
-
+  async accountBelongsToUser(accountId: number, userId: number) {
+    try {
+      return await this.accountRepo.accountBelongsToUser(accountId, userId);
+    } catch {
+      return null;
+    }
+  }
   async getAllAccounts(data: getAllAccountsDto) {
     try {
       return await this.accountRepo.getAllAccounts(data);
@@ -54,6 +60,14 @@ export class AccountsService {
   async getUsersAccount(userId: number) {
     try {
       return await this.accountRepo.getUsersAccount(userId);
+    } catch {
+      return null;
+    }
+  }
+
+  async getCompanyAccount(companyId: number) {
+    try {
+      return await this.accountRepo.getCompanyAccount(companyId);
     } catch {
       return null;
     }

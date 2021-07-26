@@ -16,6 +16,9 @@ export class searchBy {
   @IsOptional()
   @IsInt()
   userId: number;
+  @IsOptional()
+  @IsInt()
+  companyId: number;
 }
 export class getAllAccountsDto {
   @IsOptional()

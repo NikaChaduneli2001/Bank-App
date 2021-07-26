@@ -1,4 +1,13 @@
-import { Body, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import {
+  Body,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  Req,
+} from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import { createAccountDto } from 'src/dto/create-accounts.dto';
 import { getAllAccountsDto } from 'src/dto/get-all.accounts.dto';
@@ -42,8 +51,16 @@ export class AccountsController {
   }
 
   @Delete(':id')
-  async deletedAccount(@Param('id') id: number) {
+  async deletedAccount(@Param('id') id: number, @Req() req) {
     try {
+      const { user } = req;
+      const belongs = await this.accountService.accountBelongsToUser(
+        id,
+        user.id,
+      );
+      if (!belongs) {
+        return getErrorMessage('Unspecified user');
+      }
       const deleted = await this.accountService.deletedAccont(Number(id));
       if (!deleted) {
         return getErrorMessage('Could not delete account');
@@ -56,8 +73,20 @@ export class AccountsController {
   }
 
   @Put(':id')
-  async updateAccount(@Param('id') id: number, data: accountInterface) {
+  async updateAccount(
+    @Param('id') id: number,
+    data: accountInterface,
+    @Req() req,
+  ) {
     try {
+      const { user } = req;
+      const belongs = await this.accountService.accountBelongsToUser(
+        id,
+        user.id,
+      );
+      if (!belongs) {
+        return getErrorMessage('Unspecified user');
+      }
       const updated = await this.accountService.updateAccount(id, data);
       if (!updated) {
         return getErrorMessage('Could not update account');
@@ -68,7 +97,7 @@ export class AccountsController {
       return getErrorMessage('Could not update account with given params');
     }
   }
-  @Get(':userId')
+  @Get('user/:userId')
   async getUsersAccount(@Param('userId') userId: number) {
     try {
       const findUsersAccount = await this.accountService.getUsersAccount(
@@ -81,6 +110,24 @@ export class AccountsController {
       }
     } catch {
       return getErrorMessage('Could not find users account with given params');
+    }
+  }
+
+  @Get('company/:companyId')
+  async getCompanyAccount(@Param('companyId') companyId: number) {
+    try {
+      const findAccount = await this.accountService.getCompanyAccount(
+        companyId,
+      );
+      if (!findAccount) {
+        return getErrorMessage('Could not find company account');
+      } else {
+        return getSuccessMessage(findAccount);
+      }
+    } catch {
+      return getErrorMessage(
+        'Could not find company account with given params',
+      );
     }
   }
 }
