@@ -67,7 +67,7 @@ export class AccountsController {
       const { user } = req;
       const belongs = await this.accountService.accountBelongsToUser(
         id,
-        user.id,
+        user.userId,
       );
       if (!belongs) {
         return getErrorMessage('Unspecified user');
@@ -95,7 +95,7 @@ export class AccountsController {
       const { user } = req;
       const belongs = await this.accountService.accountBelongsToUser(
         id,
-        user.id,
+        user.userId,
       );
       if (!belongs) {
         return getErrorMessage('Unspecified user');
@@ -127,7 +127,7 @@ export class AccountsController {
   }
 
   @Get('company/:companyId')
-  async getCompanyAccount(@Param('companyId') companyId: number) {
+  async getCompanyAccount(@Param('companyId') companyId) {
     try {
       const findAccount = await this.accountService.getCompanyAccount(
         companyId,
