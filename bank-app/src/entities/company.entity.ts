@@ -15,7 +15,7 @@ export class CompanyEntity {
     type: 'varchar',
     length: 100,
   })
-  comanyName: string;
+  companyName: string;
   @Column({
     type: 'varchar',
     length: 100,

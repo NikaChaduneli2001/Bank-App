@@ -3,6 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { createAccountDto } from 'src/dto/create-accounts.dto';
 import { getAllAccountsDto } from 'src/dto/get-all.accounts.dto';
 import { AccountEntity } from 'src/entities/account.entity';
+import { accountInterface } from 'src/interface/account.interface';
+import { usersInterface } from 'src/interface/users.interface';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -13,10 +15,10 @@ export class AccountsMysqlService {
   ) {}
 
   async createAccount(data: createAccountDto) {
-    if (data.companyId) {
-      const newAccount = new AccountEntity();
-      newAccount.user = data.userId;
-      newAccount.company = data.companyId;
+    if (data.company) {
+      const newAccount: AccountEntity = new AccountEntity();
+      newAccount.user = data.user;
+      newAccount.company = data.company;
       newAccount.balance = data.balance;
       newAccount.cardCode = data.cardCode;
       newAccount.accountNumber = data.accountNumber;
@@ -24,7 +26,7 @@ export class AccountsMysqlService {
       const result = await this.accountsRepository.save(newAccount);
       return {
         id: result.id,
-        companyId: result.company,
+        company: result.company,
         userId: result.user,
         balance: result.balance,
         cardCode: await this.printCardInfo(result.cardCode),
@@ -32,7 +34,7 @@ export class AccountsMysqlService {
       };
     } else {
       const newAccount: AccountEntity = new AccountEntity();
-      newAccount.user = data.userId;
+      newAccount.user = data.user;
       newAccount.balance = data.balance;
       newAccount.cardCode = data.cardCode;
       newAccount.accountNumber = data.accountNumber;
@@ -121,6 +123,26 @@ export class AccountsMysqlService {
       };
     } else {
       return null;
+    }
+  }
+
+  async updateAccount(id: number, data: accountInterface) {
+    await this.accountsRepository.save({
+      id,
+      ...data,
+    });
+    const updated = await this.accountsRepository.findOne({ id });
+    if (updated) {
+      return {
+        id: updated.id,
+        user: updated.user,
+        company: updated.company,
+        balance: updated.balance,
+        carCode: await this.printCardInfo(updated.cardCode),
+        accountNumber: updated.accountNumber,
+      };
+    } else {
+      return false;
     }
   }
 }

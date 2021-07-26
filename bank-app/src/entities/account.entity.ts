@@ -15,10 +15,8 @@ export class AccountEntity {
   @PrimaryGeneratedColumn()
   id: number;
   @ManyToOne(() => UsersEntity, (user) => user.id, { eager: true })
-  @JoinColumn({ name: 'userId' })
   user: number | UsersEntity;
   @ManyToOne(() => CompanyEntity, (company) => company.id, { eager: true })
-  @JoinColumn({ name: 'companyId' })
   company: number | CompanyEntity;
   @Column('float')
   balance: number;

@@ -1,7 +1,8 @@
-import { Body, Delete, Get, Param, Post, Query } from '@nestjs/common';
+import { Body, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import { createAccountDto } from 'src/dto/create-accounts.dto';
 import { getAllAccountsDto } from 'src/dto/get-all.accounts.dto';
+import { accountInterface } from 'src/interface/account.interface';
 import {
   getErrorMessage,
   getSuccessMessage,
@@ -16,7 +17,11 @@ export class AccountsController {
   async createAccount(@Body() data: createAccountDto) {
     try {
       const newAccount = await this.accountService.createAccount(data);
-      return getSuccessMessage(newAccount);
+      if (!newAccount) {
+        return getErrorMessage('Could not create account with given params');
+      } else {
+        return getSuccessMessage(newAccount);
+      }
     } catch {
       return getErrorMessage('Could not create account');
     }
@@ -47,6 +52,20 @@ export class AccountsController {
       }
     } catch {
       return getErrorMessage('Could not delete account with given params');
+    }
+  }
+
+  @Put(':id')
+  async updateAccount(@Param('id') id: number, data: accountInterface) {
+    try {
+      const updated = await this.accountService.updateAccount(id, data);
+      if (!updated) {
+        return getErrorMessage('Could not update account');
+      } else {
+        return getSuccessMessage(updated);
+      }
+    } catch {
+      return getErrorMessage('Could not update account with given params');
     }
   }
 }

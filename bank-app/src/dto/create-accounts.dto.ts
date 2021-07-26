@@ -10,10 +10,10 @@ import {
 export class createAccountDto {
   @IsInt()
   @IsOptional()
-  userId?: number;
+  user?: number;
   @IsInt()
   @IsOptional()
-  companyId?: number;
+  company?: number;
   @IsNumber()
   balance: number;
   @IsString()
