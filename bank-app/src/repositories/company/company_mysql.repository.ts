@@ -68,6 +68,15 @@ export class CompanyMysqlService {
     return raw.replace(/[\\%_]/g, '\\$&');
   }
 
+  async getOneCompany(id: number) {
+    const findCompany = await this.companyRepository.findOne({ id });
+    if (!findCompany) {
+      return false;
+    } else {
+      return findCompany;
+    }
+  }
+
   async deletedCompany(id: number) {
     await this.companyRepository.save({
       id,

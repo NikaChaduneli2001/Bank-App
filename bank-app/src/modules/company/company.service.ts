@@ -24,6 +24,14 @@ export class CompanyService {
     }
   }
 
+  async getOneCompany(id: number) {
+    try {
+      return await this.companyRepo.getOneCompany(id);
+    } catch {
+      return null;
+    }
+  }
+
   async deletedCompany(id: number) {
     try {
       return await this.companyRepo.deletedCompany(id);

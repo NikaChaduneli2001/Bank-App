@@ -1,4 +1,4 @@
-import { Body, Delete, Get, Param } from '@nestjs/common';
+import { Body, Delete, Get, Param, Req } from '@nestjs/common';
 import { Put } from '@nestjs/common';
 import { Post } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
@@ -39,6 +39,20 @@ export class CompanyController {
       }
     } catch {
       return getErrorMessage('Could not get companies with given params');
+    }
+  }
+
+  @Get(':id')
+  async getOneCompany(@Param('id') id: number) {
+    try {
+      const findCompany = await this.companyService.getOneCompany(id);
+      if (!findCompany) {
+        return getErrorMessage('Could not get company');
+      } else {
+        return getSuccessMessage(findCompany);
+      }
+    } catch {
+      return getErrorMessage('Could not get company with given params');
     }
   }
 
