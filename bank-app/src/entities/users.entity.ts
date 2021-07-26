@@ -30,7 +30,7 @@ export class UsersEntity {
     length: 250,
   })
   hash: string;
-  @Column('varchar')
+  @Column({ type: 'enum', enum: Role, default: Role.User })
   role: Role;
   @Column('int')
   phone: number;

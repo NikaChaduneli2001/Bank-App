@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 
 @Entity('company')
-@Unique(['email', 'personalNumber'])
+@Unique(['email'])
 export class CompanyEntity {
   @PrimaryGeneratedColumn()
   id: number;
@@ -21,14 +21,6 @@ export class CompanyEntity {
     length: 100,
   })
   email: string;
-  @Column({
-    type: 'varchar',
-    length: 100,
-  })
-  password: string;
-  @Column({
-    type: 'varchar',
-    length: 11,
-  })
-  personalNumber: number;
+  @Column({ type: 'boolean', default: false })
+  deleted: boolean;
 }

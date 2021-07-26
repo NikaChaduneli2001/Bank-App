@@ -10,6 +10,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { UsersMysqlModule } from './modules/repositories/users/users_mysql.module';
 import { UsersModule } from './modules/users/users.module';
 import { AccountsModule } from './modules/accounts/accounts.module';
+import { CompanyModule } from './modules/company/company.module';
 
 @Module({
   imports: [
@@ -28,11 +29,12 @@ import { AccountsModule } from './modules/accounts/accounts.module';
         TransactionEntity,
         UsersEntity,
       ],
-      synchronize: false,
+      synchronize:false,
     }),
     UsersModule,
     AuthModule,
     AccountsModule,
+    CompanyModule,
   ],
   controllers: [],
   providers: [],
