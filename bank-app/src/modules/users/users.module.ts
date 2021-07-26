@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { UsersMysqlModule } from '../repositories/users/users_mysql.module';
+import { UsersMysqlModule } from '../../repositories/users/users_mysql.module';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 

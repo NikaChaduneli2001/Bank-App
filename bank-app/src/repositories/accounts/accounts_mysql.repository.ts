@@ -109,7 +109,7 @@ export class AccountsMysqlService {
       return result.map((account) => ({
         id: account.id,
         account: account.accountNumber,
-        carCode: this.printCardInfo(account.cardCode),
+        cardCode: this.printCardInfo(account.cardCode),
         balance: account.balance,
         userId: account.user,
       }));

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { getAllUsersDto } from 'src/dto/get-all-users.dto';
 import { registerUsersDto } from 'src/dto/register-users.dto';
 import { UsersInterface } from 'src/interface/users.interface';
-import { UsersMysqlService } from '../repositories/users/users_mysql.repository';
+import { UsersMysqlService } from '../../repositories/users/users_mysql.repository';
 
 @Injectable()
 export class UsersService {

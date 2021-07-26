@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { CompanyMysqlModule } from '../repositories/company/company_mysql.module';
+import { CompanyMysqlModule } from '../../repositories/company/company_mysql.module';
 import { CompanyController } from './company.controller';
 import { CompanyService } from './company.service';
 

@@ -6,7 +6,7 @@ import { ServicesEntity } from './entities/services.entity';
 import { TransactionEntity } from './entities/trasaction.entity';
 import { UsersEntity } from './entities/users.entity';
 import { AuthModule } from './modules/auth/auth.module';
-import { UsersMysqlModule } from './modules/repositories/users/users_mysql.module';
+import { UsersMysqlModule } from './repositories/users/users_mysql.module';
 import { UsersModule } from './modules/users/users.module';
 import { AccountsModule } from './modules/accounts/accounts.module';
 import { CompanyModule } from './modules/company/company.module';

@@ -111,10 +111,11 @@ export class AccountsController {
     }
   }
   @Get('user/:userId')
-  async getUsersAccount(@Param('userId') userId: number) {
+  async getUsersAccount(@Req() req) {
     try {
+      const { user } = req;
       const findUsersAccount = await this.accountService.getUsersAccount(
-        userId,
+        user.userId,
       );
       if (!findUsersAccount) {
         return getErrorMessage('Could not find users account');
@@ -127,10 +128,11 @@ export class AccountsController {
   }
 
   @Get('company/:companyId')
-  async getCompanyAccount(@Param('companyId') companyId) {
+  async getCompanyAccount(@Req() req) {
     try {
+      const { user } = req;
       const findAccount = await this.accountService.getCompanyAccount(
-        companyId,
+        user.companyId,
       );
       if (!findAccount) {
         return getErrorMessage('Could not find company account');

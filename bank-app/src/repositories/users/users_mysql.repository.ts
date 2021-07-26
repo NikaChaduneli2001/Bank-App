@@ -113,7 +113,7 @@ export class UsersMysqlService {
     if (data.sortBy) {
       query.orderBy(data.sortBy, data.sortDir);
     }
-    let limit = 25;
+    let limit = 0;
     if (data.limit) {
       Math.min(data.limit, 25);
     }
