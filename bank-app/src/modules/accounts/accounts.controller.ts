@@ -88,7 +88,7 @@ export class AccountsController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   async updateAccount(
     @Param('id') id: number,
-    data: accountInterface,
+    @Body() data: accountInterface,
     @Req() req,
   ) {
     try {

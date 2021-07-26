@@ -112,7 +112,7 @@ export class UsersController {
   @Put(':id')
   @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  async updateUser(@Param('id') id: number, data: usersInterface) {
+  async updateUser(@Param('id') id: number, @Body() data: usersInterface) {
     try {
       const updated = await this.usersService.updateUser(id, data);
       if (!updated) {

@@ -1,9 +1,11 @@
-import { Delete, Get, Param } from '@nestjs/common';
+import { Body, Delete, Get, Param } from '@nestjs/common';
+import { Put } from '@nestjs/common';
 import { Post } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import { getAllCompanyDto } from 'src/dto/get-all-company.dto';
 import { getAllAccountsDto } from 'src/dto/get-all.accounts.dto';
 import { registerCompanyDto } from 'src/dto/register-company.dto';
+import { companyInterface } from 'src/interface/company.interface';
 import {
   getErrorMessage,
   getSuccessMessage,
@@ -51,6 +53,20 @@ export class CompanyController {
       }
     } catch {
       return getErrorMessage('Could not delete company with given params');
+    }
+  }
+
+  @Put(':id')
+  async updateCompany(@Param('id') id: number, @Body() data: companyInterface) {
+    try {
+      const updated = await this.companyService.updateCompany(id, data);
+      if (!updated) {
+        return getErrorMessage('Could not update company');
+      } else {
+        return getSuccessMessage(updated);
+      }
+    } catch {
+      return getErrorMessage('Could not update company with given params');
     }
   }
 }

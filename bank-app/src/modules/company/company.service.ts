@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { getAllCompanyDto } from 'src/dto/get-all-company.dto';
 import { registerCompanyDto } from 'src/dto/register-company.dto';
+import { companyInterface } from 'src/interface/company.interface';
 import { CompanyMysqlService } from '../repositories/company/company_mysql.repository';
 
 @Injectable()
@@ -26,6 +27,14 @@ export class CompanyService {
   async deletedCompany(id: number) {
     try {
       return await this.companyRepo.deletedCompany(id);
+    } catch {
+      return null;
+    }
+  }
+
+  async updateCompany(id: number, data: companyInterface) {
+    try {
+      return await this.companyRepo.updateCompany(id, data);
     } catch {
       return null;
     }

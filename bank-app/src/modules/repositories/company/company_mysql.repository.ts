@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { getAllCompanyDto } from 'src/dto/get-all-company.dto';
 import { registerCompanyDto } from 'src/dto/register-company.dto';
 import { CompanyEntity } from 'src/entities/company.entity';
+import { companyInterface } from 'src/interface/company.interface';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -78,6 +79,24 @@ export class CompanyMysqlService {
       return {
         id: deleted.id,
         company: deleted.companyName,
+      };
+    }
+  }
+
+  async updateCompany(id: number, data: companyInterface) {
+    await this.companyRepository.save({
+      id,
+      ...data,
+    });
+
+    const updated = await this.companyRepository.findOne({ id });
+    if (!updated) {
+      return false;
+    } else {
+      return {
+        id: updated.id,
+        company: updated.companyName,
+        email: updated.email,
       };
     }
   }
