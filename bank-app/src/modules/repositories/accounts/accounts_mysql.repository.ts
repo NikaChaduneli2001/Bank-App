@@ -145,4 +145,25 @@ export class AccountsMysqlService {
       return false;
     }
   }
+
+  async getUsersAccount(userId: number) {
+    const result = this.accountsRepository
+      .createQueryBuilder()
+      .leftJoinAndSelect('user', 'userId')
+      .where('deleted=false')
+      .andWhere('user=:userId', { user: userId })
+      .select(['fullName', 'email', 'role'])
+      .getMany();
+    if (result) {
+      return (await result).map((result) => ({
+        id: result.id,
+        balance: result.balance,
+        cardCode: this.printCardInfo(result.cardCode),
+        accountNumber: result.accountNumber,
+        userId: result.user,
+      }));
+    } else {
+      return false;
+    }
+  }
 }

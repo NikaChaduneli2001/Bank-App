@@ -68,4 +68,19 @@ export class AccountsController {
       return getErrorMessage('Could not update account with given params');
     }
   }
+  @Get(':userId')
+  async getUsersAccount(@Param('userId') userId: number) {
+    try {
+      const findUsersAccount = await this.accountService.getUsersAccount(
+        userId,
+      );
+      if (!findUsersAccount) {
+        return getErrorMessage('Could not find users account');
+      } else {
+        return getSuccessMessage(findUsersAccount);
+      }
+    } catch {
+      return getErrorMessage('Could not find users account with given params');
+    }
+  }
 }

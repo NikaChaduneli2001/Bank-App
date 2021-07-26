@@ -15,7 +15,6 @@ export class UsersEntity {
   @PrimaryGeneratedColumn()
   id: number;
   @ManyToOne(() => CompanyEntity, (comp) => comp.id)
-  @JoinColumn({ name: 'companyId' })
   company: number | CompanyEntity;
   @Column('varchar', {
     length: 100,

@@ -51,4 +51,11 @@ export class AccountsService {
       return null;
     }
   }
+  async getUsersAccount(userId: number) {
+    try {
+      return await this.accountRepo.getUsersAccount(userId);
+    } catch {
+      return null;
+    }
+  }
 }
