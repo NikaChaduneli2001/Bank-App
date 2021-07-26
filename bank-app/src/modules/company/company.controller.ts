@@ -1,4 +1,4 @@
-import { Get } from '@nestjs/common';
+import { Delete, Get, Param } from '@nestjs/common';
 import { Post } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import { getAllCompanyDto } from 'src/dto/get-all-company.dto';
@@ -37,6 +37,20 @@ export class CompanyController {
       }
     } catch {
       return getErrorMessage('Could not get companies with given params');
+    }
+  }
+
+  @Delete(':id')
+  async deletedCompany(@Param('id') id: number) {
+    try {
+      const deleted = await this.companyService.deletedCompany(id);
+      if (!deleted) {
+        return getErrorMessage('Could not delete company');
+      } else {
+        return getSuccessMessage(deleted);
+      }
+    } catch {
+      return getErrorMessage('Could not delete company with given params');
     }
   }
 }

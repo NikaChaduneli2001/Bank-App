@@ -22,4 +22,12 @@ export class CompanyService {
       return null;
     }
   }
+
+  async deletedCompany(id: number) {
+    try {
+      return await this.companyRepo.deletedCompany(id);
+    } catch {
+      return null;
+    }
+  }
 }

@@ -53,7 +53,7 @@ export class CompanyMysqlService {
     if (result) {
       return result.map((company) => ({
         id: company.id,
-        companyName: company.companyName,
+        company: company.companyName,
         email: company.email,
       }));
     } else {
@@ -63,5 +63,22 @@ export class CompanyMysqlService {
 
   escapeLikeString(raw: string): string {
     return raw.replace(/[\\%_]/g, '\\$&');
+  }
+
+  async deletedCompany(id: number) {
+    await this.companyRepository.save({
+      id,
+      delete: true,
+    });
+
+    const deleted = await this.companyRepository.findOne({ id });
+    if (!deleted) {
+      return false;
+    } else {
+      return {
+        id: deleted.id,
+        company: deleted.companyName,
+      };
+    }
   }
 }
