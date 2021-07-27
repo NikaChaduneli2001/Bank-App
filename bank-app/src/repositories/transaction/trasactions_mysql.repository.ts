@@ -23,9 +23,7 @@ export class TransactionMysqlService {
     if (data.serviceId) {
       transaction.service = data.serviceId;
     }
-    if (data.time === new Date()) {
-      transaction.time = new Date();
-    }
+    transaction.time = new Date();
     transaction.status = data.status;
 
     const result = await this.transactionsRepository.save(transaction);
