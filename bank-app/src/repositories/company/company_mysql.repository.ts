@@ -47,7 +47,7 @@ export class CompanyMysqlService {
     if (data.limit) {
       Math.min(data.limit, 25);
     }
-    query.limit(limit);
+    query.limit(data.limit);
     if (data.page) {
       const page = data.page - 1;
       query.offset(page * limit);

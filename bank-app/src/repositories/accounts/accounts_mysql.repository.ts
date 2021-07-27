@@ -84,10 +84,12 @@ export class AccountsMysqlService {
         });
       }
       if (data.searchBy.userId) {
-        query.leftJoinAndSelect('account.user', 'userId');
+        query.leftJoinAndSelect('account.userId', 'user');
+        query.andWhere('user.deleted=false');
         query.select(['account.fullName', 'account.email', 'account.role']);
       } else if (data.searchBy.companyId) {
-        query.leftJoinAndSelect('account.company', 'companyId');
+        query.leftJoinAndSelect('account.companyId', 'company');
+        query.andWhere('company.deleted=false');
         query.select(['account.fullName', 'account.email', 'account.role']);
       }
     }
@@ -99,7 +101,7 @@ export class AccountsMysqlService {
     if (data.limit) {
       Math.min(data.limit, 25);
     }
-    query.limit(limit);
+    query.limit(data.limit);
     if (data.page) {
       const page = data.page - 1;
       query.offset(page * limit);

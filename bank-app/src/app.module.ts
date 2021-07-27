@@ -27,7 +27,7 @@ import { CompanyModule } from './modules/company/company.module';
         TransactionEntity,
         UsersEntity,
       ],
-      synchronize:false,
+      synchronize:true,
     }),
     UsersModule,
     AuthModule,

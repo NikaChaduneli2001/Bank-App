@@ -28,8 +28,8 @@ export class AccountsController {
   constructor(private readonly accountService: AccountsService) {}
 
   @Post()
-  @Roles(Role.Admin)
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  // @Roles(Role.Admin)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
   async createAccount(@Body() data: createAccountDto) {
     try {
       const newAccount = await this.accountService.createAccount(data);
@@ -44,8 +44,8 @@ export class AccountsController {
   }
 
   @Get()
-  @Roles(Role.Admin)
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  // @Roles(Role.Admin)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
   async getAccount(@Query() data: getAllAccountsDto) {
     try {
       const account = await this.accountService.getAllAccounts(data);

@@ -1,21 +1,27 @@
-import { Body, Delete, Get, Param, Req } from '@nestjs/common';
+import { Body, Delete, Get, Param, Req, UseGuards } from '@nestjs/common';
 import { Put } from '@nestjs/common';
 import { Post } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import { getAllCompanyDto } from 'src/dto/get-all-company.dto';
 import { getAllAccountsDto } from 'src/dto/get-all.accounts.dto';
 import { registerCompanyDto } from 'src/dto/register-company.dto';
+import { Role } from 'src/enums/role.enum';
 import { CompanyInterface } from 'src/interface/company.interface';
 import {
   getErrorMessage,
   getSuccessMessage,
 } from 'src/utils/response-functions.utils';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { Roles } from '../auth/roles.decorator';
+import { RolesGuard } from '../auth/roles.guard';
 import { CompanyService } from './company.service';
 
 @Controller('company')
 export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}
   @Post()
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async register(data: registerCompanyDto) {
     try {
       const result = await this.companyService.registerComapany(data);
@@ -57,9 +63,12 @@ export class CompanyController {
   }
 
   @Delete(':id')
-  async deletedCompany(@Param('id') id: number) {
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async deletedCompany(@Req() req) {
     try {
-      const deleted = await this.companyService.deletedCompany(id);
+      const { user } = req;
+      const deleted = await this.companyService.deletedCompany(user.companyId);
       if (!deleted) {
         return getErrorMessage('Could not delete company');
       } else {
@@ -71,9 +80,15 @@ export class CompanyController {
   }
 
   @Put(':id')
-  async updateCompany(@Param('id') id: number, @Body() data: CompanyInterface) {
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async updateCompany(@Req() req, @Body() data: CompanyInterface) {
     try {
-      const updated = await this.companyService.updateCompany(id, data);
+      const { user } = req;
+      const updated = await this.companyService.updateCompany(
+        user.companyId,
+        data,
+      );
       if (!updated) {
         return getErrorMessage('Could not update company');
       } else {

@@ -12,11 +12,7 @@ export class AccountsService {
   async createAccount(data: createAccountDto) {
     try {
       const account = await this.accountRepo.createAccount(data);
-      if (!account) {
-        return getErrorMessage('Could not create account');
-      } else {
-        return account;
-      }
+      return account;
     } catch {
       return null;
     }
