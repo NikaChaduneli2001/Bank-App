@@ -18,7 +18,7 @@ import { CompanyModule } from './modules/company/company.module';
       host: 'localhost',
       port: 3306,
       username: 'root',
-      password: 'Kobaroveli007',
+      password: '577102125aA!', 
       database: 'lvl_bank',
       entities: [
         AccountEntity,
