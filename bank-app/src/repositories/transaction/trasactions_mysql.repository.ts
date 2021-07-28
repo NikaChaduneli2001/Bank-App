@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { identity } from 'rxjs';
 import { createTransactionDto } from 'src/dto/create-transaction.dto';
 import { fillBlanaceDto } from 'src/dto/fill-balance.dto';
 import { getAllTransactiosDto } from 'src/dto/get-all-transactios.dto';
