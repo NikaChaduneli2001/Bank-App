@@ -23,6 +23,20 @@ export class TransactionMysqlService {
     private readonly accountsRepository: Repository<AccountEntity>,
   ) {}
 
+  async transactionBelongsToUser(transactionId: number, userId: number) {
+    const belongs = await this.transactionsRepository
+      .createQueryBuilder()
+      .where('deleted=false')
+      .andWhere('id=:transactionId', { id: transactionId })
+      .andWhere('userId:userId', { userId })
+      .getCount();
+    if (belongs > 0) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   async createTrnasaction(
     data: createTransactionDto,
     sameOwner: boolean,
@@ -67,8 +81,9 @@ export class TransactionMysqlService {
       return getSuccessMessage('Need Confirm');
     }
 
-    const senderUser = Number(transaction.senderId);
-    const userBalance = await this.accountsRepository.findOne(senderUser);
+    const userBalance = await this.accountsRepository.findOne(
+      transaction.senderId,
+    );
     const newBalanceUser =
       Number(userBalance.balance) - Number(transaction.balance);
     if (newBalanceUser < 0) {
@@ -78,8 +93,9 @@ export class TransactionMysqlService {
       balance: newBalanceUser,
     });
 
-    const receiverUser = Number(transaction.receiverId);
-    const receiverBalance = await this.accountsRepository.findOne(receiverUser);
+    const receiverBalance = await this.accountsRepository.findOne(
+      transaction.receiverId,
+    );
     const newBalanceReceiver =
       Number(receiverBalance.balance) + Number(transaction.balance);
     await this.accountsRepository.update(transaction.receiverId, {
@@ -163,5 +179,23 @@ export class TransactionMysqlService {
   }
   escapeLikeString(raw: string): string {
     return raw.replace(/[\\%_]/g, '\\$&');
+  }
+
+  async deleteTransactions(id: number) {
+    const findTransactions = await this.transactionsRepository.findOne({ id });
+    if (findTransactions.status === TransactionStatus.canceled) {
+      await this.transactionsRepository.save({
+        id,
+        delete: true,
+      });
+    }
+    const deleted = await this.transactionsRepository.findOne({
+      id,
+    });
+    if (!deleted) {
+      return false;
+    } else {
+      return deleted;
+    }
   }
 }

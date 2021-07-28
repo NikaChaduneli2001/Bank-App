@@ -8,6 +8,16 @@ import { TransactionMysqlService } from 'src/repositories/transaction/trasaction
 export class TransactionsService {
   constructor(private readonly transactionRepo: TransactionMysqlService) {}
 
+  async belongsToUser(transactionId: number, userId: number) {
+    try {
+      return await this.transactionRepo.transactionBelongsToUser(
+        transactionId,
+        userId,
+      );
+    } catch {
+      return null;
+    }
+  }
   async createTrnasaction(data: createTransactionDto) {
     try {
       const sameOwner = await this.transactionRepo.sameOwner(
@@ -35,6 +45,14 @@ export class TransactionsService {
   async getAllTransactios(data: getAllTransactiosDto) {
     try {
       return await this.transactionRepo.getAllTransactios(data);
+    } catch {
+      return null;
+    }
+  }
+
+  async deleteTransactions(transactionId: number) {
+    try {
+      return await this.transactionRepo.deleteTransactions(transactionId);
     } catch {
       return null;
     }
