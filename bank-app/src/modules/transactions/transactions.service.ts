@@ -3,6 +3,7 @@ import { createTransactionDto } from 'src/dto/create-transaction.dto';
 import { getAllTransactiosDto } from 'src/dto/get-all-transactios.dto';
 import { TransactionStatus } from 'src/enums/transaction-status.enum';
 import { TransactionType } from 'src/enums/transaction-type.enum';
+import { TransactionInterface } from 'src/interface/transactions.interface';
 import { TransactionMysqlService } from 'src/repositories/transaction/trasactions_mysql.repository';
 
 @Injectable()
@@ -62,6 +63,14 @@ export class TransactionsService {
   async updateTransactionStatus(id: number, status: TransactionStatus) {
     try {
       return await this.transactionRepo.updateTransactionStatus(id, status);
+    } catch {
+      return null;
+    }
+  }
+
+  async updateTransaction(id: number, update: TransactionInterface) {
+    try {
+      return await this.transactionRepo.updateTransaction(id, update);
     } catch {
       return null;
     }

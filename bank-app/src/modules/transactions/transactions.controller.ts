@@ -7,6 +7,7 @@ import { Controller } from '@nestjs/common';
 import { createTransactionDto } from 'src/dto/create-transaction.dto';
 import { getAllTransactiosDto } from 'src/dto/get-all-transactios.dto';
 import { TransactionStatus } from 'src/enums/transaction-status.enum';
+import { TransactionInterface } from 'src/interface/transactions.interface';
 import {
   getErrorMessage,
   getSuccessMessage,
@@ -70,7 +71,7 @@ export class TransactionsController {
       return getErrorMessage('Could not delete transaction with given params');
     }
   }
-  @Put('id')
+  @Put(':id')
   async updateTransactionStatus(
     @Param('id') id: number,
     @Body() status: TransactionStatus,
@@ -98,6 +99,35 @@ export class TransactionsController {
       return getErrorMessage(
         'Could not update transaction status with given id',
       );
+    }
+  }
+
+  @Put(':id')
+  async updateTransaction(
+    @Param('id') id: number,
+    update: TransactionInterface,
+    @Req() req,
+  ) {
+    try {
+      const { user } = req;
+      const belongs = await this.transactionService.belongsToUser(
+        id,
+        user.userId,
+      );
+      if (!belongs) {
+        return getErrorMessage('You are not our user');
+      }
+      const updated = await this.transactionService.updateTransaction(
+        id,
+        update,
+      );
+      if (!updated) {
+        return getErrorMessage('Could update transaction');
+      } else {
+        return getSuccessMessage(updated);
+      }
+    } catch {
+      return getErrorMessage('Could not update transaction with given params');
     }
   }
 }
