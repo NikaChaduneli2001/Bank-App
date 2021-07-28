@@ -1,11 +1,12 @@
+import { TransactionStatus } from 'src/enums/transaction-status.enum';
+
 export class TransactionInterface {
   id: number;
-  userId: number;
-  accountId: number;
+  senderId?: number;
+  receiverId?: number;
   serviceId: number;
-  time: string;
+  time?: Date;
   balance: number;
-  role: string;
+  status?: TransactionStatus;
   description: string;
-  deleted: boolean;
 }

@@ -1,4 +1,5 @@
 import { TransactionStatus } from 'src/enums/transaction-status.enum';
+import { TransactionType } from 'src/enums/transaction-type.enum';
 import {
   Column,
   Entity,
@@ -36,6 +37,8 @@ export class TransactionEntity {
   description: string;
   @Column('enum', { enum: TransactionStatus, nullable: false })
   status: TransactionStatus;
+  @Column('enum', { enum: TransactionType, nullable: false })
+  type: TransactionType;
   @Column({
     type: 'boolean',
     default: false,

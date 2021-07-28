@@ -8,6 +8,7 @@ import {
   IsString,
 } from 'class-validator';
 import { TransactionStatus } from 'src/enums/transaction-status.enum';
+import { TransactionType } from 'src/enums/transaction-type.enum';
 
 export class createTransactionDto {
   @IsInt()
@@ -23,7 +24,7 @@ export class createTransactionDto {
   @IsOptional()
   serviceId: number;
   @IsDateString()
-  time: Date;
+  time: string;
   @IsNumber()
   balance: number;
   @IsString()
@@ -31,6 +32,8 @@ export class createTransactionDto {
   description: string;
   @IsEnum(TransactionStatus)
   status: TransactionStatus;
+  @IsEnum(TransactionType)
+  type: TransactionType;
   @IsBoolean()
   deleted: boolean;
 }
