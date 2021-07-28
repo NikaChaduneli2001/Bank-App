@@ -167,7 +167,6 @@ export class AccountsMysqlService {
       .leftJoinAndSelect('user', 'userId')
       .where('deleted=false')
       .andWhere('user=:userId', { user: userId })
-      .select(['fullName', 'email', 'role', 'balance'])
       .getMany();
     if (result) {
       return (await result).map((result) => ({
@@ -188,7 +187,6 @@ export class AccountsMysqlService {
       .leftJoinAndSelect('company', 'companyId')
       .where('deleted=false')
       .andWhere('company=:companyId', { companyId: companyId })
-      .select(['fullName', 'email'])
       .getMany();
     if (result) {
       return await result.map((result) => ({
