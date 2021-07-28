@@ -1,4 +1,5 @@
-import { TransactionStatus } from 'src/enums/transaction-status.enum';
+import { TransactionStatus } from "src/enums/transaction-status.enum";
+
 
 export class TransactionInterface {
   id: number;
