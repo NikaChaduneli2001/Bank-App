@@ -86,11 +86,10 @@ export class AccountsMysqlService {
       if (data.searchBy.userId) {
         query.leftJoinAndSelect('account.userId', 'user');
         query.andWhere('user.deleted=false');
-        query.select(['account.fullName', 'account.email', 'account.role']);
+        query.select(['user.fullName', 'user.email', 'user.role']);
       } else if (data.searchBy.companyId) {
         query.leftJoinAndSelect('account.companyId', 'company');
         query.andWhere('company.deleted=false');
-        query.select(['account.fullName', 'account.email', 'account.role']);
       }
     }
 
@@ -106,14 +105,22 @@ export class AccountsMysqlService {
       const page = data.page - 1;
       query.offset(page * limit);
     }
-    const result = await query.getMany();
+    const result = await query.getRawMany();
     if (result) {
       return result.map((account) => ({
         id: account.id,
         account: account.accountNumber,
         cardCode: this.printCardInfo(account.cardCode),
         balance: account.balance,
-        userId: account.user,
+        user: {
+          fullName: account.user.fullName,
+          email: account.user.email,
+          role: account.user.role,
+        },
+        company: {
+          comanyName: account.company.comanyName,
+          email: account.company.email,
+        },
       }));
     } else {
       return null;

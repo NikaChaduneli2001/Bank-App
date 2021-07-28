@@ -135,12 +135,12 @@ export class TransactionMysqlService {
   }
 
   async getAllTransactios(data: getAllTransactiosDto) {
-    const query = await this.transactionsRepository.createQueryBuilder(
-      'transactios',
-    );
-    query.innerJoinAndSelect('transactios.senderId', 'sender');
-    query.innerJoinAndSelect('transactios.receiverId', 'receiver');
-    query.where('transactios.deleted=false');
+    const query = this.transactionsRepository.createQueryBuilder('transaction');
+    query.leftJoinAndSelect('transaction.senderIdt', 'sender');
+    query.leftJoinAndSelect('transaction.recieverIdt', 'receiver');
+    query.leftJoinAndSelect('receiver.user', 'reciever');
+    query.leftJoinAndSelect('sender.user', 'sender');
+    query.where('transaction.delete=false');
     if (data.searchBy) {
       if (data.searchBy.time) {
         query.andWhere('cardCode like :TransactiosTime', {
@@ -161,17 +161,23 @@ export class TransactionMysqlService {
       const page = data.page - 1;
       query.offset(page * limit);
     }
-    const result = await query.getMany();
+    const result = await query.getRawMany();
     if (result) {
       return result.map((res) => ({
-        id: res.id,
-        sender: res.sender,
-        receiver: res.receiver,
-        balance: res.balance,
-        description: res.description,
-        time: res.time,
-        status: res.status,
-        type: res.type,
+        id: res.transaction.id,
+        sender: {
+          fullName: res.sender.fullName,
+          account: res.sender.account,
+        },
+        receiver: {
+          fullName: res.receiver.fullName,
+          account: res.receiver.account,
+        },
+        balance: res.transaction.balance,
+        description: res.transaction.description,
+        time: res.transaction.time,
+        status: res.transaction.status,
+        type: res.transaction.type,
       }));
     } else {
       return null;
@@ -199,4 +205,38 @@ export class TransactionMysqlService {
     }
   }
 
+  async updateTransactionStatus(id: number, status: TransactionStatus) {
+    await this.transactionsRepository.save({
+      id,
+      status,
+    });
+    const queryBuilder =
+      this.transactionsRepository.createQueryBuilder('transaction');
+    queryBuilder.leftJoinAndSelect('transaction.senderId', 'sender');
+    queryBuilder.leftJoinAndSelect('transaction.recieverId', 'receiver');
+    queryBuilder.leftJoinAndSelect('receiver.user', 'reciever');
+    queryBuilder.leftJoinAndSelect('sender.user', 'sender');
+    queryBuilder.where('transaction.id = :id', { id });
+    const result = await queryBuilder.getRawMany();
+
+    return result.map((res) => ({
+      moneyAmount: res.transaction.moneyAmount,
+      transactuonDate: res.transaction.times,
+      status: res.transaction.status,
+      type: res.transaction.type,
+      description: res.transaction.description,
+      sender: {
+        fullName: res.sender.fullName,
+        account: res.sender.accountNumber,
+      },
+      reciever: {
+        fullName: res.reciever.fullName,
+        account: res.receiver.accountNumber,
+      },
+    }));
+  }
+
+  async updateTransaction(id: number,update:TransactionInterface) {
+
+  }
 }
