@@ -7,15 +7,20 @@ import {
   Put,
   Query,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import { createAccountDto } from 'src/dto/create-accounts.dto';
 import { getAllAccountsDto } from 'src/dto/get-all.accounts.dto';
-import { accountInterface } from 'src/interface/account.interface';
+import { Role } from 'src/enums/role.enum';
+import { AccountInterface } from 'src/interface/account.interface';
 import {
   getErrorMessage,
   getSuccessMessage,
 } from 'src/utils/response-functions.utils';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { Roles } from '../auth/roles.decorator';
+import { RolesGuard } from '../auth/roles.guard';
 import { AccountsService } from './accounts.service';
 
 @Controller('accounts')
@@ -23,6 +28,8 @@ export class AccountsController {
   constructor(private readonly accountService: AccountsService) {}
 
   @Post()
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async createAccount(@Body() data: createAccountDto) {
     try {
       const newAccount = await this.accountService.createAccount(data);
@@ -37,6 +44,8 @@ export class AccountsController {
   }
 
   @Get()
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async getAccount(@Query() data: getAllAccountsDto) {
     try {
       const account = await this.accountService.getAllAccounts(data);
@@ -51,12 +60,14 @@ export class AccountsController {
   }
 
   @Delete(':id')
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async deletedAccount(@Param('id') id: number, @Req() req) {
     try {
       const { user } = req;
       const belongs = await this.accountService.accountBelongsToUser(
         id,
-        user.id,
+        user.userId,
       );
       if (!belongs) {
         return getErrorMessage('Unspecified user');
@@ -73,16 +84,18 @@ export class AccountsController {
   }
 
   @Put(':id')
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async updateAccount(
     @Param('id') id: number,
-    data: accountInterface,
+    @Body() data: AccountInterface,
     @Req() req,
   ) {
     try {
       const { user } = req;
       const belongs = await this.accountService.accountBelongsToUser(
         id,
-        user.id,
+        user.userId,
       );
       if (!belongs) {
         return getErrorMessage('Unspecified user');
@@ -98,10 +111,11 @@ export class AccountsController {
     }
   }
   @Get('user/:userId')
-  async getUsersAccount(@Param('userId') userId: number) {
+  async getUsersAccount(@Req() req) {
     try {
+      const { user } = req;
       const findUsersAccount = await this.accountService.getUsersAccount(
-        userId,
+        user.userId,
       );
       if (!findUsersAccount) {
         return getErrorMessage('Could not find users account');
@@ -114,10 +128,11 @@ export class AccountsController {
   }
 
   @Get('company/:companyId')
-  async getCompanyAccount(@Param('companyId') companyId: number) {
+  async getCompanyAccount(@Req() req) {
     try {
+      const { user } = req;
       const findAccount = await this.accountService.getCompanyAccount(
-        companyId,
+        user.companyId,
       );
       if (!findAccount) {
         return getErrorMessage('Could not find company account');

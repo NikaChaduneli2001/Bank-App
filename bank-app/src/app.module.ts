@@ -2,14 +2,14 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AccountEntity } from './entities/account.entity';
 import { CompanyEntity } from './entities/company.entity';
-import { OperatorsEntity } from './entities/operators.entity';
 import { ServicesEntity } from './entities/services.entity';
 import { TransactionEntity } from './entities/trasaction.entity';
 import { UsersEntity } from './entities/users.entity';
 import { AuthModule } from './modules/auth/auth.module';
-import { UsersMysqlModule } from './modules/repositories/users/users_mysql.module';
+import { UsersMysqlModule } from './repositories/users/users_mysql.module';
 import { UsersModule } from './modules/users/users.module';
 import { AccountsModule } from './modules/accounts/accounts.module';
+import { CompanyModule } from './modules/company/company.module';
 
 @Module({
   imports: [
@@ -23,16 +23,16 @@ import { AccountsModule } from './modules/accounts/accounts.module';
       entities: [
         AccountEntity,
         CompanyEntity,
-        OperatorsEntity,
         ServicesEntity,
         TransactionEntity,
         UsersEntity,
       ],
-      synchronize: false,
+      synchronize:true,
     }),
     UsersModule,
     AuthModule,
     AccountsModule,
+    CompanyModule,
   ],
   controllers: [],
   providers: [],

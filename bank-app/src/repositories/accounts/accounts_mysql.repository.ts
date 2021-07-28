@@ -3,8 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { createAccountDto } from 'src/dto/create-accounts.dto';
 import { getAllAccountsDto } from 'src/dto/get-all.accounts.dto';
 import { AccountEntity } from 'src/entities/account.entity';
-import { accountInterface } from 'src/interface/account.interface';
-import { usersInterface } from 'src/interface/users.interface';
+import { AccountInterface } from 'src/interface/account.interface';
+import { UsersInterface } from 'src/interface/users.interface';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -15,39 +15,26 @@ export class AccountsMysqlService {
   ) {}
 
   async createAccount(data: createAccountDto) {
-    if (data.company) {
-      const newAccount: AccountEntity = new AccountEntity();
+    const newAccount: AccountEntity = new AccountEntity();
+    if (data.user) {
       newAccount.user = data.user;
-      newAccount.company = data.company;
-      newAccount.balance = data.balance;
-      newAccount.cardCode = data.cardCode;
-      newAccount.accountNumber = data.accountNumber;
-      newAccount.deleted = false;
-      const result = await this.accountsRepository.save(newAccount);
-      return {
-        id: result.id,
-        company: result.company,
-        userId: result.user,
-        balance: result.balance,
-        cardCode: await this.printCardInfo(result.cardCode),
-        accountNumber: result.accountNumber,
-      };
-    } else {
-      const newAccount: AccountEntity = new AccountEntity();
-      newAccount.user = data.user;
-      newAccount.balance = data.balance;
-      newAccount.cardCode = data.cardCode;
-      newAccount.accountNumber = data.accountNumber;
-      newAccount.deleted = false;
-      const result = await this.accountsRepository.save(newAccount);
-      return {
-        id: result.id,
-        userId: result.user,
-        balance: result.balance,
-        cardCode: await this.printCardInfo(result.cardCode),
-        accountNumber: result.accountNumber,
-      };
     }
+    if (data.company) {
+      newAccount.company = data.company;
+    }
+    newAccount.balance = data.balance;
+    newAccount.cardCode = data.cardCode;
+    newAccount.accountNumber = data.accountNumber;
+    newAccount.deleted = false;
+    const result = await this.accountsRepository.save(newAccount);
+    return {
+      id: result.id,
+      company: result.company,
+      userId: result.user,
+      balance: result.balance,
+      cardCode: await this.printCardInfo(result.cardCode),
+      accountNumber: result.accountNumber,
+    };
   }
   async printCardInfo(card: number) {
     const showNumbers = card;
@@ -76,31 +63,35 @@ export class AccountsMysqlService {
   async getAllAccounts(data: getAllAccountsDto) {
     const query = await this.accountsRepository.createQueryBuilder('account');
     query.where('account.deleted=false');
-    if (data.searchBy.cardCode) {
-      query.andWhere('cardCode like :AccountCardCode', {
-        AccountCardCode: `%${this.escapeLikeString(data.searchBy.cardCode)}%`,
-      });
-    } else if (data.searchBy.accountNumber) {
-      query.andWhere('accountNumber like : accountNumber', {
-        accountNumber: `%${this.escapeLikeString(
-          data.searchBy.accountNumber,
-        )}%`,
-      });
-    } else if (data.searchBy.userId) {
-      query.andWhere('userId like :UserId', {
-        UserId: `${data.searchBy.userId}`,
-      });
-    } else if (data.searchBy.companyId) {
-      query.andWhere('companyId like :CompanyId', {
-        companyId: `${data.searchBy.companyId}`,
-      });
-    }
-    if (data.searchBy.userId) {
-      query.leftJoinAndSelect('account.user', 'userId');
-      query.select(['account.fullName', 'account.email', 'account.role']);
-    } else if (data.searchBy.companyId) {
-      query.leftJoinAndSelect('account.company', 'companyId');
-      query.select(['account.fullName', 'account.email', 'account.role']);
+    if (data.searchBy) {
+      if (data.searchBy.cardCode) {
+        query.andWhere('cardCode like :AccountCardCode', {
+          AccountCardCode: `%${this.escapeLikeString(data.searchBy.cardCode)}%`,
+        });
+      } else if (data.searchBy.accountNumber) {
+        query.andWhere('accountNumber like : accountNumber', {
+          accountNumber: `%${this.escapeLikeString(
+            data.searchBy.accountNumber,
+          )}%`,
+        });
+      } else if (data.searchBy.userId) {
+        query.andWhere('userId like :UserId', {
+          UserId: `${data.searchBy.userId}`,
+        });
+      } else if (data.searchBy.companyId) {
+        query.andWhere('companyId like :CompanyId', {
+          companyId: `${data.searchBy.companyId}`,
+        });
+      }
+      if (data.searchBy.userId) {
+        query.leftJoinAndSelect('account.userId', 'user');
+        query.andWhere('user.deleted=false');
+        query.select(['account.fullName', 'account.email', 'account.role']);
+      } else if (data.searchBy.companyId) {
+        query.leftJoinAndSelect('account.companyId', 'company');
+        query.andWhere('company.deleted=false');
+        query.select(['account.fullName', 'account.email', 'account.role']);
+      }
     }
 
     if (data.sortBy) {
@@ -110,7 +101,7 @@ export class AccountsMysqlService {
     if (data.limit) {
       Math.min(data.limit, 25);
     }
-    query.limit(limit);
+    query.limit(data.limit);
     if (data.page) {
       const page = data.page - 1;
       query.offset(page * limit);
@@ -120,7 +111,7 @@ export class AccountsMysqlService {
       return result.map((account) => ({
         id: account.id,
         account: account.accountNumber,
-        carCode: this.printCardInfo(account.cardCode),
+        cardCode: this.printCardInfo(account.cardCode),
         balance: account.balance,
         userId: account.user,
       }));
@@ -141,7 +132,7 @@ export class AccountsMysqlService {
       return {
         id: deleted.id,
         account: deleted.accountNumber,
-        carcode: this.printCardInfo(deleted.cardCode),
+        cardCode: this.printCardInfo(deleted.cardCode),
         balance: deleted.balance,
         userId: deleted.user,
       };
@@ -150,7 +141,7 @@ export class AccountsMysqlService {
     }
   }
 
-  async updateAccount(id: number, data: accountInterface) {
+  async updateAccount(id: number, data: AccountInterface) {
     await this.accountsRepository.save({
       id,
       ...data,
@@ -162,7 +153,7 @@ export class AccountsMysqlService {
         user: updated.user,
         company: updated.company,
         balance: updated.balance,
-        carCode: await this.printCardInfo(updated.cardCode),
+        cardCode: await this.printCardInfo(updated.cardCode),
         accountNumber: updated.accountNumber,
       };
     } else {
@@ -176,7 +167,6 @@ export class AccountsMysqlService {
       .leftJoinAndSelect('user', 'userId')
       .where('deleted=false')
       .andWhere('user=:userId', { user: userId })
-      .select(['fullName', 'email', 'role'])
       .getMany();
     if (result) {
       return (await result).map((result) => ({
@@ -197,7 +187,6 @@ export class AccountsMysqlService {
       .leftJoinAndSelect('company', 'companyId')
       .where('deleted=false')
       .andWhere('company=:companyId', { companyId: companyId })
-      .select(['fullName', 'email'])
       .getMany();
     if (result) {
       return await result.map((result) => ({

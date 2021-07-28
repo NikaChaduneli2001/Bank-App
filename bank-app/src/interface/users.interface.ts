@@ -1,4 +1,4 @@
-export class usersInterface {
+export class UsersInterface {
   id: number;
   companyId: number;
   fullName: string;
