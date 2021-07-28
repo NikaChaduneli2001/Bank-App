@@ -201,7 +201,14 @@ export class TransactionMysqlService {
     if (!deleted) {
       return false;
     } else {
-      return deleted;
+      return {
+        id: deleted.id,
+        sender: deleted.sender,
+        receiver: deleted.receiver,
+        time: deleted.time,
+        status: deleted.status,
+        type: deleted.type,
+      };
     }
   }
 
@@ -236,7 +243,23 @@ export class TransactionMysqlService {
     }));
   }
 
-  async updateTransaction(id: number,update:TransactionInterface) {
+  async updateTransaction(id: number, update: TransactionInterface) {
+    await this.transactionsRepository.save({
+      id,
+      ...update,
+    });
 
+    const updated = await this.transactionsRepository.findOne({ id });
+    if (!updated) {
+      return false;
+    } else {
+      return {
+        id: updated.id,
+        receiver: updated.receiver,
+        sender: updated.sender,
+        type: updated.type,
+        time: updated.time,
+      };
+    }
   }
 }
