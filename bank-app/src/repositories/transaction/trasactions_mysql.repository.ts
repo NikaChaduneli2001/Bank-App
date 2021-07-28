@@ -8,10 +8,7 @@ import { AccountEntity } from 'src/entities/account.entity';
 import { TransactionEntity } from 'src/entities/trasaction.entity';
 import { TransactionStatus } from 'src/enums/transaction-status.enum';
 import { TransactionInterface } from 'src/interface/transactions.interface';
-import {
-  getErrorMessage,
-  getSuccessMessage,
-} from 'src/utils/response-functions.utils';
+import { getSuccessMessage } from 'src/utils/response-functions.utils';
 import { Repository } from 'typeorm';
 
 @Injectable()
