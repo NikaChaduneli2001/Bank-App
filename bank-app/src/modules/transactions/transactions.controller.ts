@@ -1,6 +1,8 @@
+import { Get, Query } from '@nestjs/common';
 import { Body, Post } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import { createTransactionDto } from 'src/dto/create-transaction.dto';
+import { getAllTransactiosDto } from 'src/dto/get-all-transactios.dto';
 import {
   getErrorMessage,
   getSuccessMessage,
@@ -21,6 +23,20 @@ export class TransactionsController {
         return getErrorMessage('could not create transaction');
       } else {
         return getSuccessMessage(transactions);
+      }
+    } catch {
+      return getErrorMessage('Could not create transaction with given params');
+    }
+  }
+
+  @Get()
+  async getAllTransactios(@Query() data: getAllTransactiosDto) {
+    try {
+      const result = await this.transactionService.getAllTransactios(data);
+      if (!result) {
+        return getErrorMessage('Could not create transaction');
+      } else {
+        return getSuccessMessage(result);
       }
     } catch {
       return getErrorMessage('Could not create transaction with given params');

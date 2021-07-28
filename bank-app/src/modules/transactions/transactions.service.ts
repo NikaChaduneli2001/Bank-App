@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { createTransactionDto } from 'src/dto/create-transaction.dto';
+import { getAllTransactiosDto } from 'src/dto/get-all-transactios.dto';
 import { TransactionType } from 'src/enums/transaction-type.enum';
 import { TransactionMysqlService } from 'src/repositories/transaction/trasactions_mysql.repository';
 
@@ -26,6 +27,14 @@ export class TransactionsService {
         newTransaction,
       );
       return { newTransaction, balancig };
+    } catch {
+      return null;
+    }
+  }
+
+  async getAllTransactios(data: getAllTransactiosDto) {
+    try {
+      return await this.transactionRepo.getAllTransactios(data);
     } catch {
       return null;
     }

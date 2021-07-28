@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { identity } from 'rxjs';
 import { createTransactionDto } from 'src/dto/create-transaction.dto';
 import { fillBlanaceDto } from 'src/dto/fill-balance.dto';
+import { getAllTransactiosDto } from 'src/dto/get-all-transactios.dto';
 import { AccountEntity } from 'src/entities/account.entity';
 import { TransactionEntity } from 'src/entities/trasaction.entity';
 import { TransactionStatus } from 'src/enums/transaction-status.enum';
@@ -85,7 +86,7 @@ export class TransactionMysqlService {
       balance: newBalanceReceiver,
     });
 
-    return getSuccessMessage('Transaction Succes');
+    return getSuccessMessage('Transaction Succesfully');
   }
 
   async fillBalanace(result: fillBlanaceDto): Promise<boolean> {
@@ -115,5 +116,52 @@ export class TransactionMysqlService {
     } else {
       return false;
     }
+  }
+
+  async getAllTransactios(data: getAllTransactiosDto) {
+    const query = await this.transactionsRepository.createQueryBuilder(
+      'transactios',
+    );
+    query.innerJoinAndSelect('transactios.senderId', 'sender');
+    query.innerJoinAndSelect('transactios.receiverId', 'receiver');
+    query.where('transactios.deleted=false');
+    if (data.searchBy) {
+      if (data.searchBy.time) {
+        query.andWhere('cardCode like :TransactiosTime', {
+          TransactiosTime: `%${data.searchBy.time}%`,
+        });
+      }
+    }
+
+    if (data.sortBy) {
+      query.orderBy(data.sortBy, data.sortDir);
+    }
+    let limit = 25;
+    if (data.limit) {
+      Math.min(data.limit, 25);
+    }
+    query.limit(data.limit);
+    if (data.page) {
+      const page = data.page - 1;
+      query.offset(page * limit);
+    }
+    const result = await query.getMany();
+    if (result) {
+      return result.map((res) => ({
+        id: res.id,
+        sender: res.sender,
+        receiver: res.receiver,
+        balance: res.balance,
+        description: res.description,
+        time: res.time,
+        status: res.status,
+        type: res.type,
+      }));
+    } else {
+      return null;
+    }
+  }
+  escapeLikeString(raw: string): string {
+    return raw.replace(/[\\%_]/g, '\\$&');
   }
 }
