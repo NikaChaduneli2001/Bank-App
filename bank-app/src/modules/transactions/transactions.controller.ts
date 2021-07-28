@@ -48,6 +48,26 @@ export class TransactionsController {
     }
   }
 
+  @Get(':senderId')
+  async getSenderTransactionsWithSenderId(@Req() req) {
+    try {
+      const { user } = req;
+      const findSenderTransaction =
+        await this.transactionService.getSenderTransactionsWithSenderId(
+          user.senderId,
+        );
+      if (!findSenderTransaction) {
+        return getErrorMessage('Could not find sender transaction');
+      } else {
+        return getSuccessMessage(findSenderTransaction);
+      }
+    } catch {
+      return getErrorMessage(
+        'Could not find sender transaction with given params',
+      );
+    }
+  }
+
   @Delete(':id')
   async deletedTransaction(@Param('id') id: number, @Req() req) {
     try {

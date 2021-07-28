@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { identity } from 'rxjs';
 import { createTransactionDto } from 'src/dto/create-transaction.dto';
 import { fillBlanaceDto } from 'src/dto/fill-balance.dto';
 import { getAllTransactiosDto } from 'src/dto/get-all-transactios.dto';
@@ -8,10 +7,7 @@ import { AccountEntity } from 'src/entities/account.entity';
 import { TransactionEntity } from 'src/entities/trasaction.entity';
 import { TransactionStatus } from 'src/enums/transaction-status.enum';
 import { TransactionInterface } from 'src/interface/transactions.interface';
-import {
-  getErrorMessage,
-  getSuccessMessage,
-} from 'src/utils/response-functions.utils';
+import { getSuccessMessage } from 'src/utils/response-functions.utils';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -187,6 +183,31 @@ export class TransactionMysqlService {
     return raw.replace(/[\\%_]/g, '\\$&');
   }
 
+  async getSenderTransactionsWithSenderId(senderId: number) {
+    const findSenderTransaction = await this.transactionsRepository.find({
+      id: senderId,
+    });
+    if (!findSenderTransaction) {
+      return false;
+    }
+    const queryBuilder = this.transactionsRepository.createQueryBuilder();
+    queryBuilder.leftJoinAndSelect('senderId', 'sender');
+    queryBuilder.leftJoinAndSelect('sender.user', 'sender');
+    queryBuilder.where('deleted=false');
+    const result = await queryBuilder.getRawMany();
+    return result.map((res) => ({
+      moneyAmount: res.transaction.moneyAmount,
+      transactuonDate: res.transaction.times,
+      status: res.transaction.status,
+      type: res.transaction.type,
+      description: res.transaction.description,
+      sender: {
+        fullName: res.sender.fullName,
+        account: res.sender.accountNumber,
+      },
+    }));
+  }
+
   async deleteTransactions(id: number) {
     const findTransactions = await this.transactionsRepository.findOne({ id });
     if (findTransactions.status === TransactionStatus.canceled) {
@@ -213,10 +234,13 @@ export class TransactionMysqlService {
   }
 
   async updateTransactionStatus(id: number, status: TransactionStatus) {
-    await this.transactionsRepository.save({
+    const updateSatus = await this.transactionsRepository.save({
       id,
       status,
     });
+    if (!updateSatus) {
+      return false;
+    }
     const queryBuilder =
       this.transactionsRepository.createQueryBuilder('transaction');
     queryBuilder.leftJoinAndSelect('transaction.senderId', 'sender');

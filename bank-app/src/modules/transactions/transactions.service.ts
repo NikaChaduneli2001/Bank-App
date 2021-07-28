@@ -51,6 +51,15 @@ export class TransactionsService {
       return null;
     }
   }
+  async getSenderTransactionsWithSenderId(senderId: number) {
+    try {
+      return await this.transactionRepo.getSenderTransactionsWithSenderId(
+        senderId,
+      );
+    } catch {
+      return null;
+    }
+  }
 
   async deleteTransactions(transactionId: number) {
     try {
