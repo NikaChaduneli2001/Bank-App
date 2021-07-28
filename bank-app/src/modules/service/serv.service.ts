@@ -4,7 +4,7 @@ import { GetAllServicesDto } from 'src/dto/get-all-service.dto';
 
 import { getAllAccountsDto } from 'src/dto/get-all.accounts.dto'
 import { UpdateServiceDto } from 'src/dto/update-service.dto';
-import { ServMySqlService } from '../repositories/serv/service_mysql.repository';
+import { ServMySqlService } from '../../repositories/services/service_mysql.repository';
 
 @Injectable()
 export class ServiceService {
