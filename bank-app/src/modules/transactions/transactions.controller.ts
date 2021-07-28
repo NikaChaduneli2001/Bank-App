@@ -2,9 +2,11 @@ import { Delete, Get, Query } from '@nestjs/common';
 import { Req } from '@nestjs/common';
 import { Body, Post } from '@nestjs/common';
 import { Param } from '@nestjs/common';
+import { Put } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import { createTransactionDto } from 'src/dto/create-transaction.dto';
 import { getAllTransactiosDto } from 'src/dto/get-all-transactios.dto';
+import { TransactionStatus } from 'src/enums/transaction-status.enum';
 import {
   getErrorMessage,
   getSuccessMessage,
@@ -66,6 +68,36 @@ export class TransactionsController {
       }
     } catch {
       return getErrorMessage('Could not delete transaction with given params');
+    }
+  }
+  @Put('id')
+  async updateTransactionStatus(
+    @Param('id') id: number,
+    @Body() status: TransactionStatus,
+    @Req() req,
+  ) {
+    try {
+      const { user } = req;
+      const belongs = await this.transactionService.belongsToUser(
+        Number(id),
+        user.userId,
+      );
+      if (!belongs) {
+        return getErrorMessage('You are not our user');
+      }
+      const updated = await this.transactionService.updateTransactionStatus(
+        Number(id),
+        status,
+      );
+      if (!updated) {
+        return getErrorMessage('Could not update transaction status');
+      } else {
+        return getSuccessMessage(updated);
+      }
+    } catch {
+      return getErrorMessage(
+        'Could not update transaction status with given id',
+      );
     }
   }
 }
