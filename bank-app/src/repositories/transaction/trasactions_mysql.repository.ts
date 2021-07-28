@@ -235,4 +235,8 @@ export class TransactionMysqlService {
       },
     }));
   }
+
+  async updateTransaction(id: number,update:TransactionInterface) {
+
+  }
 }
