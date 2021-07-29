@@ -3,7 +3,7 @@ import { AccountEntity } from "src/entities/account.entity";
 import { UsersEntity } from "src/entities/users.entity";
 import { Type } from "src/enums/services-type.enum";
 
-export class CreateServiceDto{
+export class createServiceDto{
     @IsInt()
     user: number | UsersEntity;
     @IsInt()

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateServiceDto } from 'src/dto/create-service.dto';
-import { GetAllServicesDto } from 'src/dto/get-all-service.dto';
-import { UpdateServiceDto } from 'src/dto/update-service.dto';
+import { createServiceDto } from 'src/dto/create-service.dto';
+import { getAllServicesDto } from 'src/dto/get-all-service.dto';
+import { updateServiceDto } from 'src/dto/update-service.dto';
 import { ServicesEntity } from 'src/entities/services.entity';
 import { Repository } from 'typeorm';
 
@@ -13,7 +13,7 @@ export class ServMySqlService {
     private readonly servicesRepo: Repository<ServicesEntity>,
   ) {}
 
-  async createService(data: CreateServiceDto) {
+  async createService(data: createServiceDto) {
     const service = new ServicesEntity();
     service.user = data.user;
     service.type = data.type;
@@ -35,7 +35,7 @@ export class ServMySqlService {
     };
   }
 
-  async getAllServices(data: GetAllServicesDto) {
+  async getAllServices(data: getAllServicesDto) {
     const query = this.servicesRepo
       .createQueryBuilder('service')
       .where('service.deleted=false');
@@ -70,7 +70,7 @@ export class ServMySqlService {
   escapeLikeString(raw: string): string {
     return raw.replace(/[\\%_]/g, '\\$&');
   }
-  async updateService(id: number, data: UpdateServiceDto) {
+  async updateService(id: number, data: updateServiceDto) {
     await this.servicesRepo.save({ id, data });
     const updateService = await this.servicesRepo.findOne({ id });
     if (!updateService) {

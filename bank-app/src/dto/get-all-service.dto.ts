@@ -5,7 +5,7 @@ enum SortDir {
   DESC = 'DESC',
 }
 
-export class GetAllServicesDto {
+export class getAllServicesDto {
   @IsString()
   @IsOptional()
   sortBy?: string;
