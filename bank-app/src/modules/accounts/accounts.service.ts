@@ -17,13 +17,6 @@ export class AccountsService {
       return null;
     }
   }
-  async printCreditInfo(cardCode: number) {
-    try {
-      return await this.accountRepo.printCardInfo(cardCode);
-    } catch {
-      return null;
-    }
-  }
   async accountBelongsToUser(accountId: number, userId: number) {
     try {
       return await this.accountRepo.accountBelongsToUser(accountId, userId);
@@ -33,7 +26,8 @@ export class AccountsService {
   }
   async getAllAccounts(data: getAllAccountsDto) {
     try {
-      return await this.accountRepo.getAllAccounts(data);
+      const findAccounts = await this.accountRepo.getAllAccounts(data);
+      return findAccounts;
     } catch {
       return null;
     }
@@ -69,5 +63,3 @@ export class AccountsService {
     }
   }
 }
-
-

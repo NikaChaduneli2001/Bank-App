@@ -62,6 +62,8 @@ export class AccountsMysqlService {
 
   async getAllAccounts(data: getAllAccountsDto) {
     const query = await this.accountsRepository.createQueryBuilder('account');
+    query.leftJoinAndSelect('account.userId', 'user');
+    query.leftJoinAndSelect('account.companyId', 'company');
     query.where('account.deleted=false');
     if (data.searchBy) {
       if (data.searchBy.cardCode) {
@@ -83,16 +85,7 @@ export class AccountsMysqlService {
           companyId: `${data.searchBy.companyId}`,
         });
       }
-      if (data.searchBy.userId) {
-        query.leftJoinAndSelect('account.userId', 'user');
-        query.andWhere('user.deleted=false');
-        query.select(['user.fullName', 'user.email', 'user.role']);
-      } else if (data.searchBy.companyId) {
-        query.leftJoinAndSelect('account.companyId', 'company');
-        query.andWhere('company.deleted=false');
-      }
     }
-
     if (data.sortBy) {
       query.orderBy(data.sortBy, data.sortDir);
     }
@@ -107,19 +100,19 @@ export class AccountsMysqlService {
     }
     const result = await query.getRawMany();
     if (result) {
-      return result.map((account) => ({
-        id: account.id,
-        account: account.accountNumber,
-        cardCode: this.printCardInfo(account.cardCode),
-        balance: account.balance,
+      return result.map((acc) => ({
+        id: acc.id,
+        account: acc.accountNumber,
+        cardCode: this.printCardInfo(acc.cardCode),
+        balance: acc.balance,
         user: {
-          fullName: account.user.fullName,
-          email: account.user.email,
-          role: account.user.role,
+          fullName: acc.user.fullName,
+          email: acc.user.email,
+          role: acc.user.role,
         },
         company: {
-          comanyName: account.company.comanyName,
-          email: account.company.email,
+          comanyName: acc.company.comanyName,
+          email: acc.company.email,
         },
       }));
     } else {
