@@ -50,7 +50,7 @@ export class ServMySqlService {
     }
     if (data.limit) {
       const limit = Math.min(data.limit, 15);
-      query.limit(limit);
+      query.limit(data.limit);
 
       const page = data.page ? data.page - 1 : 0;
       query.offset(page * limit);
