@@ -1,17 +1,22 @@
-import { Delete, Get, Query } from '@nestjs/common';
+import { Delete, Get, Query, UseGuards } from '@nestjs/common';
 import { Req } from '@nestjs/common';
 import { Body, Post } from '@nestjs/common';
 import { Param } from '@nestjs/common';
 import { Put } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import { createTransactionDto } from 'src/dto/create-transaction.dto';
+import { fillBlanaceDto } from 'src/dto/fill-balance.dto';
 import { getAllTransactiosDto } from 'src/dto/get-all-transactios.dto';
+import { Role } from 'src/enums/role.enum';
 import { TransactionStatus } from 'src/enums/transaction-status.enum';
 import { TransactionInterface } from 'src/interface/transactions.interface';
 import {
   getErrorMessage,
   getSuccessMessage,
 } from 'src/utils/response-functions.utils';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { Roles } from '../auth/roles.decorator';
+import { RolesGuard } from '../auth/roles.guard';
 import { TransactionsService } from './transactions.service';
 
 @Controller('transactions')
@@ -35,6 +40,8 @@ export class TransactionsController {
   }
 
   @Get()
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async getAllTransactios(@Query() data: getAllTransactiosDto) {
     try {
       const result = await this.transactionService.getAllTransactios(data);
@@ -69,6 +76,8 @@ export class TransactionsController {
   }
 
   @Delete(':id')
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async deletedTransaction(@Param('id') id: number, @Req() req) {
     try {
       const { user } = req;
@@ -92,6 +101,8 @@ export class TransactionsController {
     }
   }
   @Put(':id')
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async updateTransactionStatus(
     @Param('id') id: number,
     @Body() status: TransactionStatus,
@@ -123,6 +134,8 @@ export class TransactionsController {
   }
 
   @Put(':id')
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async updateTransaction(
     @Param('id') id: number,
     update: TransactionInterface,
@@ -148,6 +161,20 @@ export class TransactionsController {
       }
     } catch {
       return getErrorMessage('Could not update transaction with given params');
+    }
+  }
+  @Post('/balance/transfer')
+  @Roles(Role.Operator)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async transeferIntoAccount(@Body() body: fillBlanaceDto) {
+    try {
+      const newDeposit = await this.transactionService.transferIntoAccount(
+        body,
+      );
+      newDeposit['info'] = 'Bank Operation';
+      return getSuccessMessage(newDeposit);
+    } catch (error) {
+      return getErrorMessage(error.message);
     }
   }
 }

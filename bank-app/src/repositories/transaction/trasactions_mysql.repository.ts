@@ -8,7 +8,7 @@ import { TransactionEntity } from 'src/entities/trasaction.entity';
 import { TransactionStatus } from 'src/enums/transaction-status.enum';
 import { TransactionInterface } from 'src/interface/transactions.interface';
 import { getSuccessMessage } from 'src/utils/response-functions.utils';
-import { Repository } from 'typeorm';
+import { Repository, Transaction } from 'typeorm';
 
 @Injectable()
 export class TransactionMysqlService {
@@ -101,7 +101,7 @@ export class TransactionMysqlService {
     return getSuccessMessage('Transaction Succesfully');
   }
 
-  async fillBalanace(result: fillBlanaceDto): Promise<boolean> {
+  async fillBalance(result: fillBlanaceDto): Promise<boolean> {
     const findAccount = await this.accountsRepository.findOne(
       result.receiverId,
     );
@@ -283,6 +283,33 @@ export class TransactionMysqlService {
         sender: updated.sender,
         type: updated.type,
         time: updated.time,
+      };
+    }
+  }
+
+  async transferIntoAccount(transfer: fillBlanaceDto) {
+    const newTransaction = new TransactionEntity();
+    const balance = Math.abs(transfer.amount);
+    newTransaction.time = new Date();
+    newTransaction.type = transfer.type;
+    newTransaction.status = TransactionStatus.sent;
+    newTransaction.balance = balance;
+    newTransaction.sender = transfer.receiverId;
+    newTransaction.receiver = transfer.receiverId;
+    const createdTransaction = await this.transactionsRepository.save(
+      newTransaction,
+    );
+    if (!createdTransaction) {
+      return false;
+    } else {
+      return {
+        id: createdTransaction.id,
+        time: createdTransaction.time,
+        type: createdTransaction.type,
+        status: createdTransaction.status,
+        amount: createdTransaction.balance,
+        sender: createdTransaction.sender,
+        receiver: createdTransaction.receiver,
       };
     }
   }
