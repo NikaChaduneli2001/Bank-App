@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { createAccountDto } from 'src/dto/create-accounts.dto';
 import { getAllAccountsDto } from 'src/dto/get-all.accounts.dto';
@@ -6,15 +6,18 @@ import { AccountEntity } from 'src/entities/account.entity';
 import { AccountInterface } from 'src/interface/account.interface';
 import { UsersInterface } from 'src/interface/users.interface';
 import { Repository } from 'typeorm';
+import { runInThisContext } from 'vm';
 
 @Injectable()
 export class AccountsMysqlService {
+  private readonly logger = new Logger(AccountsMysqlService.name);
   constructor(
     @InjectRepository(AccountEntity)
     private readonly accountsRepository: Repository<AccountEntity>,
   ) {}
 
   async createAccount(data: createAccountDto) {
+    this.logger.log(`creating accounts data: ${data}`);
     const newAccount: AccountEntity = new AccountEntity();
     if (data.user) {
       newAccount.user = data.user;
@@ -27,6 +30,7 @@ export class AccountsMysqlService {
     newAccount.accountNumber = data.accountNumber;
     newAccount.deleted = false;
     const result = await this.accountsRepository.save(newAccount);
+    this.logger.log(`created account result: ${result}`);
     return {
       id: result.id,
       company: result.company,
@@ -48,11 +52,15 @@ export class AccountsMysqlService {
   }
 
   async accountBelongsToUser(accountId: number, userId: number) {
+    this.logger.log(
+      `account belongs to user , accountId: ${accountId}, userId: ${userId}`,
+    );
     const result = await this.accountsRepository
       .createQueryBuilder()
       .where('id=:accountId', { accountId: accountId })
       .andWhere('userId=:userId', { userId })
       .getCount();
+    this.logger.log(`belongs result : ${result}`);
     if (result > 0) {
       return true;
     } else {
@@ -61,7 +69,9 @@ export class AccountsMysqlService {
   }
 
   async getAllAccounts(data: getAllAccountsDto) {
+    this.logger.log(`get all accounts data: ${data}`);
     const query = await this.accountsRepository.createQueryBuilder('account');
+    this.logger.log(`queryBuilder query: ${query}`);
     query.leftJoinAndSelect('account.userId', 'user');
     query.leftJoinAndSelect('account.companyId', 'company');
     query.where('account.deleted=false');
@@ -99,6 +109,7 @@ export class AccountsMysqlService {
       query.offset(page * limit);
     }
     const result = await query.getRawMany();
+    this.logger.log(`get all accounts result: ${result}`);
     if (result) {
       return result.map((acc) => ({
         id: acc.id,
@@ -116,6 +127,7 @@ export class AccountsMysqlService {
         },
       }));
     } else {
+      this.logger.error(`coud get accounts , data:${data}`);
       return null;
     }
   }
@@ -123,11 +135,13 @@ export class AccountsMysqlService {
     return raw.replace(/[\\%_]/g, '\\$&');
   }
   async deleteAccount(id: number) {
+    this.logger.log(`deleting account id: ${id}`);
     await this.accountsRepository.save({
       id,
       deleted: true,
     });
     const deleted = await this.accountsRepository.findOne(id);
+    this.logger.log(`deleted account : ${deleted}`);
     if (deleted) {
       return {
         id: deleted.id,
@@ -137,16 +151,21 @@ export class AccountsMysqlService {
         userId: deleted.user,
       };
     } else {
+      this.logger.error(
+        `could not found deleted accounts with given id: ${id}`,
+      );
       return null;
     }
   }
 
   async updateAccount(id: number, data: AccountInterface) {
+    this.logger.log(`updating account ${id} and data: ${data}`);
     await this.accountsRepository.save({
       id,
       ...data,
     });
     const updated = await this.accountsRepository.findOne({ id });
+    this.logger.log(`updated account ${updated}`);
     if (updated) {
       return {
         id: updated.id,
@@ -157,17 +176,22 @@ export class AccountsMysqlService {
         accountNumber: updated.accountNumber,
       };
     } else {
+      this.logger.error(
+        `could not found updated account with given id:${id} and data: ${data}`,
+      );
       return false;
     }
   }
 
   async getUsersAccount(userId: number) {
+    this.logger.log(`get users account with userId :${userId}`);
     const result = this.accountsRepository
       .createQueryBuilder()
       .leftJoinAndSelect('user', 'userId')
       .where('deleted=false')
       .andWhere('user=:userId', { user: userId })
       .getMany();
+    this.logger.log(`get users account result : ${result}`);
     if (result) {
       return (await result).map((result) => ({
         id: result.id,
@@ -177,17 +201,22 @@ export class AccountsMysqlService {
         userId: result.user,
       }));
     } else {
+      this.logger.error(
+        `could not found users account with given userId: ${userId}`,
+      );
       return false;
     }
   }
 
   async getCompanyAccount(companyId: number) {
+    this.logger.log(`get users account with companyId :${companyId}`);
     const result = await this.accountsRepository
       .createQueryBuilder()
       .leftJoinAndSelect('company', 'companyId')
       .where('deleted=false')
       .andWhere('company=:companyId', { companyId: companyId })
       .getMany();
+    this.logger.log(`get company account result : ${result}`);
     if (result) {
       return await result.map((result) => ({
         id: result.id,
@@ -197,6 +226,9 @@ export class AccountsMysqlService {
         companyId: result.company,
       }));
     } else {
+      this.logger.error(
+        `could not found company account with given userId: ${companyId}`,
+      );
       return false;
     }
   }
