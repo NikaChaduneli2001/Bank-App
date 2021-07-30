@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { registerUsersDto } from 'src/dto/register-users.dto';
 import { UsersEntity } from 'src/entities/users.entity';
@@ -11,14 +11,19 @@ import { AccountEntity } from 'src/entities/account.entity';
 
 @Injectable()
 export class UsersMysqlService {
+  private readonly logger = new Logger(UsersMysqlService.name);
+
   constructor(
     @InjectRepository(UsersEntity)
     private readonly usersRepository: Repository<UsersEntity>,
   ) {}
 
   async isUser(userId: number) {
+    this.logger.log(`chek user id: ${userId}`);
     const findUser = await this.usersRepository.findOne(userId);
+    this.logger.log(`is user :${findUser}`);
     if (!findUser) {
+      this.logger.error(`user not found: ${userId}`);
       return false;
     } else {
       return findUser;
@@ -26,6 +31,7 @@ export class UsersMysqlService {
   }
 
   async registerUser(data: registerUsersDto) {
+    this.logger.log(`registering user data: ${data}`);
     const salt = await bcrypt.genSalt();
     const newUser = new UsersEntity();
     newUser.email = data.email;
@@ -37,6 +43,7 @@ export class UsersMysqlService {
     newUser.time = data.time;
     newUser.deleted = false;
     const user = await this.usersRepository.save(newUser);
+    this.logger.log(`registered user : ${user}`);
     return {
       id: user.id,
       fullName: user.fullName,
@@ -47,10 +54,15 @@ export class UsersMysqlService {
   }
 
   async getUserByPersonalNumber(personalNumber: string) {
+    this.logger.log(`users personal number: ${personalNumber}`);
     const findUser = await this.usersRepository.findOne({
       where: { personalNumber: personalNumber },
     });
+    this.logger.log(`find user by personal number: ${findUser}`);
     if (!findUser) {
+      this.logger.error(
+        `user not found with personal number: ${personalNumber}`,
+      );
       return getErrorMessage('User not found');
     }
     if (findUser.role === 'user') {
@@ -61,29 +73,44 @@ export class UsersMysqlService {
         personalNumber: findUser.personalNumber,
       };
     } else {
+      this.logger.error(
+        `user role not user, you can not this get with given pernonal number ${personalNumber}`,
+      );
       return null;
     }
   }
 
   async findUserByEmailAndPassword(email: string, password: string) {
+    this.logger.log(`check user by email and password:${email}and${password}`);
     const user = await this.usersRepository.findOne({
       where: { email: email },
     });
+    this.logger.log(`found user by email and password:${user}`);
     if (!user) {
+      this.logger.error(
+        `user not found with email${email} and password${password},user: ${user}`,
+      );
       return null;
     }
     const isPasswordCorect = bcrypt.compare(password, user.hash);
+    this.logger.log(`password is corect:${isPasswordCorect}`);
     if (!isPasswordCorect) {
+      this.logger.error(`password is not corect:${isPasswordCorect}`);
       return null;
     } else {
       return user;
     }
   }
   async findUserByPersonalNumber(personalNumber: string) {
+    this.logger.log(`users personal number for admin: ${personalNumber}`);
     const findUser = await this.usersRepository.findOne({
       where: { personalNumber: personalNumber },
     });
+    this.logger.log(`find user by personal number: ${findUser}`);
     if (!findUser) {
+      this.logger.error(
+        `user not found with personal number: ${personalNumber}`,
+      );
       return getErrorMessage('User not found');
     } else {
       return {
@@ -97,7 +124,9 @@ export class UsersMysqlService {
     }
   }
   async getAllUser(data: getAllUsersDto) {
+    this.logger.log(`get all users data: ${data}`);
     const query = await this.usersRepository.createQueryBuilder();
+    this.logger.log(`get all users queryParams: ${query}`);
     query.where('deleted=false');
     if (data.searchBy) {
       if (data.searchBy.fullName) {
@@ -132,6 +161,7 @@ export class UsersMysqlService {
       query.offset(page * limit);
     }
     const result = await query.getMany();
+    this.logger.log(`find all user:${result}`);
     if (result) {
       return result.map((user) => ({
         id: user.id,
@@ -142,6 +172,7 @@ export class UsersMysqlService {
         role: user.role,
       }));
     } else {
+      this.logger.error(`users not found with given params:${data}`);
       return null;
     }
   }
@@ -149,11 +180,13 @@ export class UsersMysqlService {
     return raw.replace(/[\\%_]/g, '\\$&');
   }
   async deleteUser(id: number) {
+    this.logger.log(`deleting user id:${id}`);
     await this.usersRepository.save({
       id,
       deleted: true,
     });
     const result = await this.usersRepository.findOne({ id });
+    this.logger.log(`found deleted user:${result}`);
     if (result) {
       return {
         id: result.id,
@@ -162,23 +195,31 @@ export class UsersMysqlService {
         role: result.role,
       };
     } else {
+      this.logger.error(`User could not be deleted user with id ${id}`);
       return null;
     }
   }
   async updateUser(id: number, user: UsersInterface) {
+    this.logger.log(`updateing users id:${id}and body: ${user}`);
     await this.usersRepository.save({
       id,
       user,
     });
 
     const updatedUser = await this.usersRepository.findOne({ id });
-    return {
-      id: updatedUser.id,
-      fullName: updatedUser.fullName,
-      email: updatedUser.email,
-      role: updatedUser.role,
-      phone: updatedUser.phone,
-      personalNumber: updatedUser.personalNumber,
-    };
+    this.logger.log(`found updated user:${updatedUser}`);
+    if (updatedUser) {
+      return {
+        id: updatedUser.id,
+        fullName: updatedUser.fullName,
+        email: updatedUser.email,
+        role: updatedUser.role,
+        phone: updatedUser.phone,
+        personalNumber: updatedUser.personalNumber,
+      };
+    } else {
+      this.logger.error(`User could not be updated user with id ${id}`);
+      return null;
+    }
   }
 }
