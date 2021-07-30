@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { createServiceDto } from 'src/dto/create-service.dto';
 import { getAllServicesDto } from 'src/dto/get-all-service.dto';
@@ -7,13 +7,15 @@ import { ServicesEntity } from 'src/entities/services.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
-export class ServMySqlService {
+export class ServiceMySqlService {
+  private readonly logger = new Logger(ServiceMySqlService.name);
   constructor(
     @InjectRepository(ServicesEntity)
     private readonly servicesRepo: Repository<ServicesEntity>,
   ) {}
 
   async createService(data: createServiceDto) {
+    this.logger.log(`create service data :${data}`);
     const service = new ServicesEntity();
     service.user = data.user;
     service.type = data.type;
@@ -22,7 +24,11 @@ export class ServMySqlService {
     service.price = data.price;
 
     const result = await this.servicesRepo.save(service);
+    this.logger.log(`created service result : ${result}`);
     if (!result) {
+      this.logger.error(
+        `could not created service with given params : ${data}`,
+      );
       return false;
     }
     return {
@@ -36,9 +42,11 @@ export class ServMySqlService {
   }
 
   async getAllServices(data: getAllServicesDto) {
+    this.logger.log(`get all srvices data: ${data}`);
     const query = this.servicesRepo
       .createQueryBuilder('service')
       .where('service.deleted=false');
+    this.logger.log(`get all srvices query : ${query}`);
 
     if (data.sortBy) {
       query.orderBy(data.sortBy, data.sortDir);
@@ -58,6 +66,7 @@ export class ServMySqlService {
       query.limit(15);
     }
     const result = await query.getMany();
+    this.logger.log(`get all services result: ${result}`);
     return result.map((result) => ({
       id: result.id,
       user: result.user,
@@ -71,9 +80,14 @@ export class ServMySqlService {
     return raw.replace(/[\\%_]/g, '\\$&');
   }
   async updateService(id: number, data: updateServiceDto) {
+    this.logger.log(`updateing service ${id} and data: ${data}`);
     await this.servicesRepo.save({ id, data });
     const updateService = await this.servicesRepo.findOne({ id });
+    this.logger.log(`updated services result: ${updateService}`);
     if (!updateService) {
+      this.logger.error(
+        `coud not updated service with given id:${id} and data: ${data}`,
+      );
       return false;
     } else {
       return {
@@ -88,13 +102,16 @@ export class ServMySqlService {
   }
 
   async deleteService(id: number) {
+    this.logger.log(`deleting service with id: ${id}`);
     await this.servicesRepo.save({
       id,
       deleted: true,
     });
 
     const deletedService = await this.servicesRepo.findOne({ id });
+    this.logger.log(`deleted service :${deletedService}`);
     if (!deletedService) {
+      this.logger.error(`could not deleted service with given id: ${id}`);
       return false;
     } else {
       return {

@@ -4,11 +4,11 @@ import { getAllServicesDto } from 'src/dto/get-all-service.dto';
 
 import { getAllAccountsDto } from 'src/dto/get-all.accounts.dto';
 import { updateServiceDto } from 'src/dto/update-service.dto';
-import { ServMySqlService } from '../../repositories/services/service_mysql.repository';
+import { ServiceMySqlService } from '../../repositories/services/service_mysql.repository';
 
 @Injectable()
 export class ServiceService {
-  constructor(private readonly serviceRepo: ServMySqlService) {}
+  constructor(private readonly serviceRepo: ServiceMySqlService) {}
 
   async createService(data: createServiceDto) {
     try {
