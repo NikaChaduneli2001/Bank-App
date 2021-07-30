@@ -8,6 +8,14 @@ import { UsersMysqlService } from '../../repositories/users/users_mysql.reposito
 export class UsersService {
   constructor(private readonly usersRepo: UsersMysqlService) {}
 
+  async isUser(userId: number) {
+    try {
+      const user = await this.usersRepo.isUser(userId);
+      return user;
+    } catch {
+      return null;
+    }
+  }
   async registerUser(data: registerUsersDto) {
     try {
       const result = await this.usersRepo.registerUser(data);

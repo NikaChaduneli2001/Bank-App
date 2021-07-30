@@ -16,6 +16,15 @@ export class UsersMysqlService {
     private readonly usersRepository: Repository<UsersEntity>,
   ) {}
 
+  async isUser(userId: number) {
+    const findUser = await this.usersRepository.findOne(userId);
+    if (!findUser) {
+      return false;
+    } else {
+      return findUser;
+    }
+  }
+
   async registerUser(data: registerUsersDto) {
     const salt = await bcrypt.genSalt();
     const newUser = new UsersEntity();

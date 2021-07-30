@@ -5,6 +5,7 @@ import {
   Param,
   Post,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { Put } from '@nestjs/common';
@@ -98,6 +99,10 @@ export class UsersController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   async deletedUser(@Param('id') id: number) {
     try {
+      const findUser = await this.usersService.isUser(id);
+      if (!findUser) {
+        return getErrorMessage('u are not users');
+      }
       const deleted = await this.usersService.deleteUser(Number(id));
       if (!deleted) {
         return getErrorMessage('Could Not deleted user');
@@ -114,6 +119,10 @@ export class UsersController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   async updateUser(@Param('id') id: number, @Body() data: UsersInterface) {
     try {
+      const findUser = await this.usersService.isUser(id);
+      if (!findUser) {
+        return getErrorMessage('u are not users');
+      }
       const updated = await this.usersService.updateUser(id, data);
       if (!updated) {
         return getErrorMessage('Could nor updated user');
