@@ -12,7 +12,6 @@ import {
 import { Controller } from '@nestjs/common';
 import { createServiceDto } from 'src/dto/create-service.dto';
 import { getAllServicesDto } from 'src/dto/get-all-service.dto';
-import { getAllAccountsDto } from 'src/dto/get-all.accounts.dto';
 import { updateServiceDto } from 'src/dto/update-service.dto';
 import { Role } from 'src/enums/role.enum';
 import {
