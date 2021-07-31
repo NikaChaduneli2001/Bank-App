@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { IsDateString, IsEnum, IsOptional, IsString } from 'class-validator';
 
 enum sortDir {
   DESC = 'DESC',

@@ -18,13 +18,10 @@ export class TransactionEntity {
   @JoinColumn({ name: 'userId' })
   user: number | UsersEntity;
   @ManyToOne(() => AccountEntity, (account) => account.id, { eager: true })
-  @JoinColumn({ name: 'senderId' })
   sender: number | AccountEntity;
   @ManyToOne(() => AccountEntity, (account) => account.id, { eager: true })
-  @JoinColumn({ name: 'receiverId' })
   receiver: number | AccountEntity;
   @ManyToOne(() => ServicesEntity, (service) => service.id, { eager: true })
-  @JoinColumn({ name: 'serviceId' })
   service: number | ServicesEntity;
   @Column('datetime', { nullable: false })
   time: Date;

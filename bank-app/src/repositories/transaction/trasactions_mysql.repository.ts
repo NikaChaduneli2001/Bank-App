@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { createTransactionDto } from 'src/dto/create-transaction.dto';
 import { fillBlanaceDto } from 'src/dto/fill-balance.dto';
@@ -8,10 +8,11 @@ import { TransactionEntity } from 'src/entities/trasaction.entity';
 import { TransactionStatus } from 'src/enums/transaction-status.enum';
 import { TransactionInterface } from 'src/interface/transactions.interface';
 import { getSuccessMessage } from 'src/utils/response-functions.utils';
-import { Repository, Transaction } from 'typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class TransactionMysqlService {
+  private readonly logger = new Logger(TransactionMysqlService.name);
   constructor(
     @InjectRepository(TransactionEntity)
     private readonly transactionsRepository: Repository<TransactionEntity>,
