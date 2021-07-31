@@ -19,11 +19,11 @@ export class UsersMysqlService {
   ) {}
 
   async isUser(userId: number) {
-    this.logger.log(`chek user id: ${userId}`);
+    this.logger.log(`chek user id: ${JSON.stringify(userId)}`);
     const findUser = await this.usersRepository.findOne(userId);
-    this.logger.log(`is user :${findUser}`);
+    this.logger.log(`is user :${JSON.stringify(findUser)}`);
     if (!findUser) {
-      this.logger.error(`user not found: ${userId}`);
+      this.logger.error(`user not found: ${JSON.stringify(userId)}`);
       return false;
     } else {
       return findUser;
@@ -31,7 +31,7 @@ export class UsersMysqlService {
   }
 
   async registerUser(data: registerUsersDto) {
-    this.logger.log(`registering user data: ${data}`);
+    this.logger.log(`registering user data: ${JSON.stringify(data)}`);
     const salt = await bcrypt.genSalt();
     const newUser = new UsersEntity();
     newUser.email = data.email;
@@ -43,7 +43,7 @@ export class UsersMysqlService {
     newUser.time = data.time;
     newUser.deleted = false;
     const user = await this.usersRepository.save(newUser);
-    this.logger.log(`registered user : ${user}`);
+    this.logger.log(`registered user : ${JSON.stringify(user)}`);
     return {
       id: user.id,
       fullName: user.fullName,
@@ -54,14 +54,18 @@ export class UsersMysqlService {
   }
 
   async getUserByPersonalNumber(personalNumber: string) {
-    this.logger.log(`users personal number: ${personalNumber}`);
+    this.logger.log(`users personal number: ${JSON.stringify(personalNumber)}`);
     const findUser = await this.usersRepository.findOne({
       where: { personalNumber: personalNumber },
     });
-    this.logger.log(`find user by personal number: ${findUser}`);
+    this.logger.log(
+      `find user by personal number: ${JSON.stringify(findUser)}`,
+    );
     if (!findUser) {
       this.logger.error(
-        `user not found with personal number: ${personalNumber}`,
+        `user not found with personal number: ${JSON.stringify(
+          personalNumber,
+        )}`,
       );
       return getErrorMessage('User not found');
     }
@@ -74,42 +78,60 @@ export class UsersMysqlService {
       };
     } else {
       this.logger.error(
-        `user role not user, you can not this get with given pernonal number ${personalNumber}`,
+        `user role not user, you can not this get with given pernonal number ${JSON.stringify(
+          personalNumber,
+        )}`,
       );
       return null;
     }
   }
 
   async findUserByEmailAndPassword(email: string, password: string) {
-    this.logger.log(`check user by email and password:${email}and${password}`);
+    this.logger.log(
+      `check user by email and password:${JSON.stringify(
+        email,
+      )}and${JSON.stringify(password)}`,
+    );
     const user = await this.usersRepository.findOne({
       where: { email: email },
     });
-    this.logger.log(`found user by email and password:${user}`);
+    this.logger.log(`found user by email and password:${JSON.stringify(user)}`);
     if (!user) {
       this.logger.error(
-        `user not found with email${email} and password${password},user: ${user}`,
+        `user not found with email${JSON.stringify(
+          email,
+        )} and password${JSON.stringify(password)},user: ${JSON.stringify(
+          user,
+        )}`,
       );
       return null;
     }
     const isPasswordCorect = bcrypt.compare(password, user.hash);
-    this.logger.log(`password is corect:${isPasswordCorect}`);
+    this.logger.log(`password is corect:${JSON.stringify(isPasswordCorect)}`);
     if (!isPasswordCorect) {
-      this.logger.error(`password is not corect:${isPasswordCorect}`);
+      this.logger.error(
+        `password is not corect:${JSON.stringify(isPasswordCorect)}`,
+      );
       return null;
     } else {
       return user;
     }
   }
   async findUserByPersonalNumber(personalNumber: string) {
-    this.logger.log(`users personal number for admin: ${personalNumber}`);
+    this.logger.log(
+      `users personal number for admin: ${JSON.stringify(personalNumber)}`,
+    );
     const findUser = await this.usersRepository.findOne({
       where: { personalNumber: personalNumber },
     });
-    this.logger.log(`find user by personal number: ${findUser}`);
+    this.logger.log(
+      `find user by personal number: ${JSON.stringify(findUser)}`,
+    );
     if (!findUser) {
       this.logger.error(
-        `user not found with personal number: ${personalNumber}`,
+        `user not found with personal number: ${JSON.stringify(
+          personalNumber,
+        )}`,
       );
       return getErrorMessage('User not found');
     } else {
@@ -124,9 +146,9 @@ export class UsersMysqlService {
     }
   }
   async getAllUser(data: getAllUsersDto) {
-    this.logger.log(`get all users data: ${data}`);
+    this.logger.log(`get all users data: ${JSON.stringify(data)}`);
     const query = await this.usersRepository.createQueryBuilder();
-    this.logger.log(`get all users queryParams: ${query}`);
+    this.logger.log(`get all users queryParams: ${JSON.stringify(query)}`);
     query.where('deleted=false');
     if (data.searchBy) {
       if (data.searchBy.fullName) {
@@ -161,7 +183,7 @@ export class UsersMysqlService {
       query.offset(page * limit);
     }
     const result = await query.getMany();
-    this.logger.log(`find all user:${result}`);
+    this.logger.log(`find all user:${JSON.stringify(result)}`);
     if (result) {
       return result.map((user) => ({
         id: user.id,
@@ -172,7 +194,9 @@ export class UsersMysqlService {
         role: user.role,
       }));
     } else {
-      this.logger.error(`users not found with given params:${data}`);
+      this.logger.error(
+        `users not found with given params:${JSON.stringify(data)}`,
+      );
       return null;
     }
   }
@@ -180,13 +204,13 @@ export class UsersMysqlService {
     return raw.replace(/[\\%_]/g, '\\$&');
   }
   async deleteUser(id: number) {
-    this.logger.log(`deleting user id:${id}`);
+    this.logger.log(`deleting user id:${JSON.stringify(id)}`);
     await this.usersRepository.save({
       id,
       deleted: true,
     });
     const result = await this.usersRepository.findOne({ id });
-    this.logger.log(`found deleted user:${result}`);
+    this.logger.log(`found deleted user:${JSON.stringify(result)}`);
     if (result) {
       return {
         id: result.id,
@@ -195,19 +219,25 @@ export class UsersMysqlService {
         role: result.role,
       };
     } else {
-      this.logger.error(`User could not be deleted user with id ${id}`);
+      this.logger.error(
+        `User could not be deleted user with id ${JSON.stringify(id)}`,
+      );
       return null;
     }
   }
   async updateUser(id: number, user: UsersInterface) {
-    this.logger.log(`updateing users id:${id}and body: ${user}`);
+    this.logger.log(
+      `updateing users id:${JSON.stringify(id)}and body: ${JSON.stringify(
+        user,
+      )}`,
+    );
     await this.usersRepository.save({
       id,
       user,
     });
 
     const updatedUser = await this.usersRepository.findOne({ id });
-    this.logger.log(`found updated user:${updatedUser}`);
+    this.logger.log(`found updated user:${JSON.stringify(updatedUser)}`);
     if (updatedUser) {
       return {
         id: updatedUser.id,
@@ -218,7 +248,7 @@ export class UsersMysqlService {
         personalNumber: updatedUser.personalNumber,
       };
     } else {
-      this.logger.error(`User could not be updated user with id ${id}`);
+      this.logger.error(`User could not be updated user with id ${JSON.stringify(id)}`);
       return null;
     }
   }
