@@ -36,7 +36,7 @@ export class ServiceController {
     this.logger.log(`create service body: ${JSON.stringify(data)}`);
     try {
       const newAccount = await this.serviceService.createService(data);
-      this.logger.log(`created service new service : ${newAccount}`);
+      this.logger.log(`created service new service : ${JSON.stringify(newAccount)}`);
       return getSuccessMessage(newAccount);
     } catch (error) {
       this.logger.error(

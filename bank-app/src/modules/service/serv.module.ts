@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { ServMySqlModule } from '../../repositories/services/service_mysql.module';
+import { ServiceMySqlModule } from '../../repositories/services/service_mysql.module';
 import { ServiceController } from './serv.controller';
 import { ServiceService } from './serv.service';
 
 @Module({
-  imports: [ServMySqlModule],
+  imports: [ServiceMySqlModule],
   controllers: [ServiceController],
   providers: [ServiceService],
   exports: [ServiceService],

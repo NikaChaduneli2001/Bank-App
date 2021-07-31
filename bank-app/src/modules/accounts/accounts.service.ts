@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { createAccountDto } from 'src/dto/create-accounts.dto';
-import { getAllAccountsDto } from 'src/dto/get-all.accounts.dto';
+import { getAllAccountsDto } from 'src/dto/get-all-accounts.dto';
 import { AccountInterface } from 'src/interface/account.interface';
 import { getErrorMessage } from 'src/utils/response-functions.utils';
 import { AccountsMysqlService } from '../../repositories/accounts/accounts_mysql.repository';

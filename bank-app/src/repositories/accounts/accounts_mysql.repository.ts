@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { createAccountDto } from 'src/dto/create-accounts.dto';
-import { getAllAccountsDto } from 'src/dto/get-all.accounts.dto';
+import { getAllAccountsDto } from 'src/dto/get-all-accounts.dto';
 import { AccountEntity } from 'src/entities/account.entity';
 import { AccountInterface } from 'src/interface/account.interface';
 import { UsersInterface } from 'src/interface/users.interface';
@@ -17,7 +17,7 @@ export class AccountsMysqlService {
   ) {}
 
   async createAccount(data: createAccountDto) {
-    this.logger.log(`creating accounts data: ${data}`);
+    this.logger.log(`creating accounts data: ${JSON.stringify(data)}`);
     const newAccount: AccountEntity = new AccountEntity();
     if (data.user) {
       newAccount.user = data.user;
@@ -30,7 +30,7 @@ export class AccountsMysqlService {
     newAccount.accountNumber = data.accountNumber;
     newAccount.deleted = false;
     const result = await this.accountsRepository.save(newAccount);
-    this.logger.log(`created account result: ${result}`);
+    this.logger.log(`created account result: ${JSON.stringify(result)}`);
     return {
       id: result.id,
       company: result.company,
@@ -53,7 +53,9 @@ export class AccountsMysqlService {
 
   async accountBelongsToUser(accountId: number, userId: number) {
     this.logger.log(
-      `account belongs to user , accountId: ${accountId}, userId: ${userId}`,
+      `account belongs to user , accountId: ${JSON.stringify(
+        accountId,
+      )}, userId: ${JSON.stringify(userId)}`,
     );
     const result = await this.accountsRepository
       .createQueryBuilder()
@@ -69,11 +71,11 @@ export class AccountsMysqlService {
   }
 
   async getAllAccounts(data: getAllAccountsDto) {
-    this.logger.log(`get all accounts data: ${data}`);
+    this.logger.log(`get all accounts data: ${JSON.stringify(data)}`);
     const query = await this.accountsRepository.createQueryBuilder('account');
-    this.logger.log(`queryBuilder query: ${query}`);
-    query.leftJoinAndSelect('account.userId', 'user');
-    query.leftJoinAndSelect('account.companyId', 'company');
+    this.logger.log(`queryBuilder query: ${JSON.stringify(query)}`);
+    query.leftJoinAndSelect('account.user', 'users');
+    query.leftJoinAndSelect('account.company', 'company');
     query.where('account.deleted=false');
     if (data.searchBy) {
       if (data.searchBy.cardCode) {
@@ -109,25 +111,27 @@ export class AccountsMysqlService {
       query.offset(page * limit);
     }
     const result = await query.getRawMany();
-    this.logger.log(`get all accounts result: ${result}`);
+    this.logger.log(`get all accounts result: ${JSON.stringify(result)}`);
     if (result) {
       return result.map((acc) => ({
-        id: acc.id,
-        account: acc.accountNumber,
-        cardCode: this.printCardInfo(acc.cardCode),
-        balance: acc.balance,
+        id: acc.account_id,
+        account: acc.account_accountNumber,
+        cardCode: this.printCardInfo(acc.account_cardCode),
+        balance: acc.account_balance,
         user: {
-          fullName: acc.user.fullName,
-          email: acc.user.email,
-          role: acc.user.role,
+          id: acc.account_userId,
+          fullName: acc.users_fullName,
+          email: acc.users_email,
+          role: acc.users_role,
         },
         company: {
-          comanyName: acc.company.comanyName,
-          email: acc.company.email,
+          id: acc.account_companyId,
+          comanyName: acc.company_comanyName,
+          email: acc.company_email,
         },
       }));
     } else {
-      this.logger.error(`coud get accounts , data:${data}`);
+      this.logger.error(`coud get accounts , data:${JSON.stringify(data)}`);
       return null;
     }
   }
@@ -135,13 +139,13 @@ export class AccountsMysqlService {
     return raw.replace(/[\\%_]/g, '\\$&');
   }
   async deleteAccount(id: number) {
-    this.logger.log(`deleting account id: ${id}`);
+    this.logger.log(`deleting account id: ${JSON.stringify(id)}`);
     await this.accountsRepository.save({
       id,
       deleted: true,
     });
     const deleted = await this.accountsRepository.findOne(id);
-    this.logger.log(`deleted account : ${deleted}`);
+    this.logger.log(`deleted account : ${JSON.stringify(deleted)}`);
     if (deleted) {
       return {
         id: deleted.id,
@@ -152,20 +156,24 @@ export class AccountsMysqlService {
       };
     } else {
       this.logger.error(
-        `could not found deleted accounts with given id: ${id}`,
+        `could not found deleted accounts with given id: ${JSON.stringify(id)}`,
       );
       return null;
     }
   }
 
   async updateAccount(id: number, data: AccountInterface) {
-    this.logger.log(`updating account ${id} and data: ${data}`);
+    this.logger.log(
+      `updating account ${JSON.stringify(id)} and data: ${JSON.stringify(
+        data,
+      )}`,
+    );
     await this.accountsRepository.save({
       id,
       ...data,
     });
     const updated = await this.accountsRepository.findOne({ id });
-    this.logger.log(`updated account ${updated}`);
+    this.logger.log(`updated account ${JSON.stringify(updated)}`);
     if (updated) {
       return {
         id: updated.id,
@@ -177,21 +185,23 @@ export class AccountsMysqlService {
       };
     } else {
       this.logger.error(
-        `could not found updated account with given id:${id} and data: ${data}`,
+        `could not found updated account with given id:${JSON.stringify(
+          id,
+        )} and data: ${JSON.stringify(data)}`,
       );
       return false;
     }
   }
 
   async getUsersAccount(userId: number) {
-    this.logger.log(`get users account with userId :${userId}`);
+    this.logger.log(`get users account with userId :${JSON.stringify(userId)}`);
     const result = this.accountsRepository
       .createQueryBuilder()
       .leftJoinAndSelect('user', 'userId')
       .where('deleted=false')
       .andWhere('user=:userId', { user: userId })
       .getMany();
-    this.logger.log(`get users account result : ${result}`);
+    this.logger.log(`get users account result : ${JSON.stringify(result)}`);
     if (result) {
       return (await result).map((result) => ({
         id: result.id,
@@ -202,21 +212,25 @@ export class AccountsMysqlService {
       }));
     } else {
       this.logger.error(
-        `could not found users account with given userId: ${userId}`,
+        `could not found users account with given userId: ${JSON.stringify(
+          userId,
+        )}`,
       );
       return false;
     }
   }
 
   async getCompanyAccount(companyId: number) {
-    this.logger.log(`get users account with companyId :${companyId}`);
+    this.logger.log(
+      `get users account with companyId :${JSON.stringify(companyId)}`,
+    );
     const result = await this.accountsRepository
       .createQueryBuilder()
-      .leftJoinAndSelect('company', 'companyId')
+      .leftJoinAndSelect('company', 'company')
       .where('deleted=false')
       .andWhere('company=:companyId', { companyId: companyId })
       .getMany();
-    this.logger.log(`get company account result : ${result}`);
+    this.logger.log(`get company account result : ${JSON.stringify(result)}`);
     if (result) {
       return await result.map((result) => ({
         id: result.id,
@@ -227,7 +241,9 @@ export class AccountsMysqlService {
       }));
     } else {
       this.logger.error(
-        `could not found company account with given userId: ${companyId}`,
+        `could not found company account with given userId: ${JSON.stringify(
+          companyId,
+        )}`,
       );
       return false;
     }

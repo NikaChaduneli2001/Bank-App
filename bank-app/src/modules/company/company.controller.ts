@@ -3,7 +3,7 @@ import { Put } from '@nestjs/common';
 import { Post } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import { getAllCompanyDto } from 'src/dto/get-all-company.dto';
-import { getAllAccountsDto } from 'src/dto/get-all.accounts.dto';
+import { getAllAccountsDto } from 'src/dto/get-all-accounts.dto';
 import { registerCompanyDto } from 'src/dto/register-company.dto';
 import { Role } from 'src/enums/role.enum';
 import { CompanyInterface } from 'src/interface/company.interface';
