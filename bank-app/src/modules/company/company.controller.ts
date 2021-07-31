@@ -22,7 +22,6 @@ import {
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { Roles } from '../auth/roles.decorator';
 import { RolesGuard } from '../auth/roles.guard';
-import { CompanyService } from './company.service';
 
 @Controller('company')
 export class CompanyController {
