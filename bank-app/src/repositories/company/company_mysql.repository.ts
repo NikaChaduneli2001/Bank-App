@@ -13,11 +13,19 @@ export class CompanyMysqlService {
     private readonly companyRepository: Repository<CompanyEntity>,
   ) {}
 
+  async companyBelongsToUser(companyId: number, userId: number) {
+    const findUsersCompany = await this.companyRepository.findOne(companyId);
+    if (findUsersCompany.user === userId) {
+      return findUsersCompany;
+    } else {
+      return false;
+    }
+  }
+
   async registerCompany(data: registerCompanyDto) {
     const newCompany: CompanyEntity = new CompanyEntity();
     newCompany.companyName = data.companyName;
     newCompany.email = data.email;
-
     const registeredCompany = await this.companyRepository.save(newCompany);
     if (!registeredCompany) {
       return false;

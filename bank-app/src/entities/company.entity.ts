@@ -5,6 +5,7 @@ import {
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
+import { UsersEntity } from './users.entity';
 
 @Entity('company')
 @Unique(['email'])
@@ -16,6 +17,8 @@ export class CompanyEntity {
     length: 100,
   })
   companyName: string;
+  @ManyToOne(() => UsersEntity, (user) => user.id, { eager: true })
+  user: number | UsersEntity;
   @Column({
     type: 'varchar',
     length: 100,
