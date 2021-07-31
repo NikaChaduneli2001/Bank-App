@@ -36,11 +36,15 @@ export class ServiceController {
     this.logger.log(`create service body: ${JSON.stringify(data)}`);
     try {
       const newAccount = await this.serviceService.createService(data);
-      this.logger.log(`created service new service : ${JSON.stringify(newAccount)}`);
+      this.logger.log(
+        `created service new service : ${JSON.stringify(newAccount)}`,
+      );
       return getSuccessMessage(newAccount);
     } catch (error) {
       this.logger.error(
-        `could not created service with given params , data: ${data}`,
+        `could not created service with given params , data: ${JSON.stringify(
+          data,
+        )}`,
       );
       return getErrorMessage('Could not create account');
     }
@@ -48,13 +52,15 @@ export class ServiceController {
 
   @Get()
   async getService(@Query() data: getAllServicesDto) {
-    this.logger.log(`get all services data: ${data}`);
+    this.logger.log(`get all services data: ${JSON.stringify(data)}`);
     try {
       const account = await this.serviceService.getAllServices(data);
-      this.logger.log(`get all services :${account}`);
+      this.logger.log(`get all services :${JSON.stringify(account)}`);
       if (!account) {
         this.logger.error(
-          `could bot ger srvices with given params , data: ${data}`,
+          `could bot ger srvices with given params , data: ${JSON.stringify(
+            data,
+          )}`,
         );
         return getErrorMessage('Could not get account');
       } else {
@@ -62,7 +68,9 @@ export class ServiceController {
       }
     } catch (error) {
       this.logger.error(
-        `could not get services with given params , data: ${data}, error: ${error}`,
+        `could not get services with given params , data: ${JSON.stringify(
+          data,
+        )}, error: ${error}`,
       );
       return getErrorMessage('Could not get account with given params');
     }
@@ -72,19 +80,23 @@ export class ServiceController {
   @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async deletedService(@Param('id') id: number) {
-    this.logger.log(`deleting service with given id:${id}`);
+    this.logger.log(`deleting service with given id:${JSON.stringify(id)}`);
     try {
       const deleted = await this.serviceService.deleteService(Number(id));
-      this.logger.log(`deleted services : ${deleted}`);
+      this.logger.log(`deleted services : ${JSON.stringify(deleted)}`);
       if (!deleted) {
-        this.logger.error(`could not deleted service with given id:${id}`);
+        this.logger.error(
+          `could not deleted service with given id:${JSON.stringify(id)}`,
+        );
         return getErrorMessage('Could not delete account');
       } else {
         return getSuccessMessage(deleted);
       }
     } catch (error) {
       this.logger.error(
-        `could not delete services with given params , id: ${id}, error: ${error}`,
+        `could not delete services with given params , id: ${JSON.stringify(
+          id,
+        )}, error: ${error}`,
       );
       return getErrorMessage('Could not delete account with given params');
     }
@@ -93,13 +105,19 @@ export class ServiceController {
   @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async updateService(@Param('id') id: number, data: updateServiceDto) {
-    this.logger.log(`updateing service with given id:${id} and data: ${data}`);
+    this.logger.log(
+      `updateing service with given id:${JSON.stringify(
+        id,
+      )} and data: ${JSON.stringify(data)}`,
+    );
     try {
       const updated = await this.serviceService.updateService(id, data);
-      this.logger.log(`updated service : ${updated}`);
+      this.logger.log(`updated service : ${JSON.stringify(updated)}`);
       if (!updated) {
         this.logger.error(
-          `could not updated service with given id:${id} and data : ${data}`,
+          `could not updated service with given id:${JSON.stringify(
+            id,
+          )} and data : ${JSON.stringify(data)}`,
         );
         return getErrorMessage('Could not update service');
       } else {
@@ -107,7 +125,9 @@ export class ServiceController {
       }
     } catch (error) {
       this.logger.error(
-        `could not delete services with given params , id: ${id},and data : ${data},error: ${error}`,
+        `could not delete services with given params , id: ${JSON.stringify(
+          id,
+        )},and data : ${JSON.stringify(data)},error: ${error}`,
       );
       return getErrorMessage('Could not update service with given params');
     }

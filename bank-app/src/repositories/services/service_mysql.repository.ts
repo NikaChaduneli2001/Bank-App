@@ -15,7 +15,7 @@ export class ServiceMySqlService {
   ) {}
 
   async createService(data: createServiceDto) {
-    this.logger.log(`create service data :${data}`);
+    this.logger.log(`create service data :${JSON.stringify(data)}`);
     const service = new ServicesEntity();
     service.user = data.user;
     service.type = data.type;
@@ -24,10 +24,10 @@ export class ServiceMySqlService {
     service.price = data.price;
 
     const result = await this.servicesRepo.save(service);
-    this.logger.log(`created service result : ${result}`);
+    this.logger.log(`created service result : ${JSON.stringify(result)}`);
     if (!result) {
       this.logger.error(
-        `could not created service with given params : ${data}`,
+        `could not created service with given params : ${JSON.stringify(data)}`,
       );
       return false;
     }
@@ -42,11 +42,11 @@ export class ServiceMySqlService {
   }
 
   async getAllServices(data: getAllServicesDto) {
-    this.logger.log(`get all srvices data: ${data}`);
+    this.logger.log(`get all srvices data: ${JSON.stringify(data)}`);
     const query = this.servicesRepo
       .createQueryBuilder('service')
       .where('service.deleted=false');
-    this.logger.log(`get all srvices query : ${query}`);
+    this.logger.log(`get all srvices query : ${JSON.stringify(query)}`);
 
     if (data.sortBy) {
       query.orderBy(data.sortBy, data.sortDir);
@@ -66,7 +66,7 @@ export class ServiceMySqlService {
       query.limit(15);
     }
     const result = await query.getMany();
-    this.logger.log(`get all services result: ${result}`);
+    this.logger.log(`get all services result: ${JSON.stringify(result)}`);
     return result.map((result) => ({
       id: result.id,
       user: result.user,
@@ -80,13 +80,21 @@ export class ServiceMySqlService {
     return raw.replace(/[\\%_]/g, '\\$&');
   }
   async updateService(id: number, data: updateServiceDto) {
-    this.logger.log(`updateing service ${id} and data: ${data}`);
+    this.logger.log(
+      `updateing service ${JSON.stringify(id)} and data: ${JSON.stringify(
+        data,
+      )}`,
+    );
     await this.servicesRepo.save({ id, data });
     const updateService = await this.servicesRepo.findOne({ id });
-    this.logger.log(`updated services result: ${updateService}`);
+    this.logger.log(
+      `updated services result: ${JSON.stringify(updateService)}`,
+    );
     if (!updateService) {
       this.logger.error(
-        `coud not updated service with given id:${id} and data: ${data}`,
+        `coud not updated service with given id:${JSON.stringify(
+          updateService,
+        )} and data: ${JSON.stringify(data)}`,
       );
       return false;
     } else {
@@ -102,16 +110,18 @@ export class ServiceMySqlService {
   }
 
   async deleteService(id: number) {
-    this.logger.log(`deleting service with id: ${id}`);
+    this.logger.log(`deleting service with id: ${JSON.stringify(id)}`);
     await this.servicesRepo.save({
       id,
       deleted: true,
     });
 
     const deletedService = await this.servicesRepo.findOne({ id });
-    this.logger.log(`deleted service :${deletedService}`);
+    this.logger.log(`deleted service :${JSON.stringify(deletedService)}`);
     if (!deletedService) {
-      this.logger.error(`could not deleted service with given id: ${id}`);
+      this.logger.error(
+        `could not deleted service with given id: ${JSON.stringify(id)}`,
+      );
       return false;
     } else {
       return {
