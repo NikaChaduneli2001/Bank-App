@@ -14,10 +14,8 @@ export class ServicesEntity {
   @PrimaryGeneratedColumn()
   id: number;
   @ManyToOne(() => UsersEntity, (user) => user.id, { eager: true })
-  @JoinColumn({ name: 'userId' })
   user: number | UsersEntity;
   @ManyToOne(() => AccountEntity, (account) => account.id, { eager: true })
-  @JoinColumn({ name: 'accountId' })
   account: number | AccountEntity;
   @Column('varchar')
   description: string;

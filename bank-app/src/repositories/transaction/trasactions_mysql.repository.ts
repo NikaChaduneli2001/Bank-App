@@ -343,8 +343,8 @@ export class TransactionMysqlService {
     }
     const queryBuilder =
       this.transactionsRepository.createQueryBuilder('transaction');
-    queryBuilder.leftJoinAndSelect('transaction.senderId', 'sender');
-    queryBuilder.leftJoinAndSelect('transaction.recieverId', 'receiver');
+    queryBuilder.leftJoinAndSelect('transaction.sender', 'sender');
+    queryBuilder.leftJoinAndSelect('transaction.reciever', 'receiver');
     queryBuilder.leftJoinAndSelect('receiver.user', 'reciever');
     queryBuilder.leftJoinAndSelect('sender.user', 'sender');
     queryBuilder.where('transaction.id = :id', { id });
