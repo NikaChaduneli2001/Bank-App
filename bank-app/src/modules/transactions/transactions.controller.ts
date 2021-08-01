@@ -25,6 +25,8 @@ export class TransactionsController {
   constructor(private readonly transactionService: TransactionsService) {}
 
   @Post()
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async createTransactions(@Body() data: createTransactionDto) {
     this.logger.log(`create transactions body: ${JSON.stringify(data)}`);
     try {

@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { getAllCompanyDto } from 'src/dto/get-all-company.dto';
 import { registerCompanyDto } from 'src/dto/register-company.dto';
 import { CompanyEntity } from 'src/entities/company.entity';
+import { UsersEntity } from 'src/entities/users.entity';
 import { CompanyInterface } from 'src/interface/company.interface';
 import { Repository } from 'typeorm';
 
@@ -12,6 +13,8 @@ export class CompanyMysqlService {
   constructor(
     @InjectRepository(CompanyEntity)
     private readonly companyRepository: Repository<CompanyEntity>,
+    @InjectRepository(UsersEntity)
+    private readonly usersRepository: Repository<UsersEntity>,
   ) {}
 
   async companyBelongsToUser(companyId: number, userId: number) {
@@ -35,6 +38,11 @@ export class CompanyMysqlService {
     const newCompany: CompanyEntity = new CompanyEntity();
     newCompany.companyName = data.companyName;
     newCompany.email = data.email;
+    newCompany.user = data.user;
+    const findUser = await this.usersRepository.findOne(data.user);
+    if (findUser.email !== data.email) {
+      return false;
+    }
     const registeredCompany = await this.companyRepository.save(newCompany);
     this.logger.log(`registered company ${registeredCompany}`);
     if (!registeredCompany) {

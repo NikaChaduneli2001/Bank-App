@@ -62,7 +62,7 @@ export class AccountsController {
   @Get()
   @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  async getAccount(@Query() data: getAllAccountsDto) {
+  async getAccounts(@Query() data: getAllAccountsDto) {
     this.logger.log(`get all accounts data: ${JSON.stringify(data)}`);
     try {
       const account = await this.accountService.getAllAccounts(data);
