@@ -121,9 +121,10 @@ export class UsersMysqlService {
     this.logger.log(
       `users personal number for admin: ${JSON.stringify(personalNumber)}`,
     );
-    const findUser = await this.usersRepository.findOne({
-      where: { personalNumber: personalNumber },
-    });
+    const findUser = await this.usersRepository.findOne(personalNumber);
+    if (findUser.personalNumber === personalNumber) {
+      return findUser;
+    }
     this.logger.log(
       `find user by personal number: ${JSON.stringify(findUser)}`,
     );
@@ -248,7 +249,9 @@ export class UsersMysqlService {
         personalNumber: updatedUser.personalNumber,
       };
     } else {
-      this.logger.error(`User could not be updated user with id ${JSON.stringify(id)}`);
+      this.logger.error(
+        `User could not be updated user with id ${JSON.stringify(id)}`,
+      );
       return null;
     }
   }
