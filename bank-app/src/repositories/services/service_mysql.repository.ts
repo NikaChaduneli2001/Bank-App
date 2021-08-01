@@ -46,7 +46,6 @@ export class ServiceMySqlService {
     const query = this.servicesRepo
       .createQueryBuilder('service')
       .where('service.deleted=false');
-    this.logger.log(`get all srvices query : ${JSON.stringify(query)}`);
 
     if (data.sortBy) {
       query.orderBy(data.sortBy, data.sortDir);

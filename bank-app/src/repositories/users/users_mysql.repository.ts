@@ -149,8 +149,7 @@ export class UsersMysqlService {
   async getAllUser(data: getAllUsersDto) {
     this.logger.log(`get all users data: ${JSON.stringify(data)}`);
     const query = await this.usersRepository.createQueryBuilder();
-    this.logger.log(`get all users queryParams: ${JSON.stringify(query)}`);
-    query.where('deleted=false');
+    query.where('deleted=false')
     if (data.searchBy) {
       if (data.searchBy.fullName) {
         query.andWhere('fullName like :UsersFullName', {

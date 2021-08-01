@@ -29,8 +29,8 @@ export class UsersController {
   private readonly logger = new Logger(UsersController.name);
   constructor(private readonly usersService: UsersService) {}
   @Post()
-  @Roles(Role.Admin)
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  // @Roles(Role.Admin)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
   async registerUser(@Body() data: registerUsersDto) {
     this.logger.log(`register user ${JSON.stringify(data)}`);
     try {
@@ -55,8 +55,8 @@ export class UsersController {
   }
 
   @Get(':personalNumber')
-  @Roles(Role.User)
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  // @Roles(Role.User)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
   async getUserByPersonalNumber(
     @Param('personalNumber') personalNumber: string,
   ) {
@@ -122,8 +122,8 @@ export class UsersController {
     }
   }
   @Get()
-  @Roles(Role.Admin)
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  // @Roles(Role.Admin)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
   async getUser(@Query() data: getAllUsersDto) {
     this.logger.log(`get All users data ${JSON.stringify(data)}`);
     try {

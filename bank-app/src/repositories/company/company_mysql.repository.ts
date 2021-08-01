@@ -52,7 +52,6 @@ export class CompanyMysqlService {
   async getAllCompany(data: getAllCompanyDto) {
     this.logger.log(`get all compnay company data: ${JSON.stringify(data)}`);
     const query = await this.companyRepository.createQueryBuilder();
-    this.logger.log(`get all compnay company query: ${JSON.stringify(query)}`);
     query.where('deleted=false');
     if (data.searchBy) {
       if (data.searchBy.companyName) {

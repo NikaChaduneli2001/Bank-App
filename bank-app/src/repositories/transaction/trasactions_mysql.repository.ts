@@ -196,7 +196,6 @@ export class TransactionMysqlService {
     query.leftJoinAndSelect('receiver.user', 'reciever');
     query.leftJoinAndSelect('sender.user', 'sender');
     query.where('transaction.delete=false');
-    this.logger.log(`get all transactions query: ${JSON.stringify(query)}`);
     if (data.searchBy) {
       if (data.searchBy.time) {
         query.andWhere('cardCode like :TransactiosTime', {

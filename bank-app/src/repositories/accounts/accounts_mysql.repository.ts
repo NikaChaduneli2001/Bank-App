@@ -73,7 +73,6 @@ export class AccountsMysqlService {
   async getAllAccounts(data: getAllAccountsDto) {
     this.logger.log(`get all accounts data: ${JSON.stringify(data)}`);
     const query = await this.accountsRepository.createQueryBuilder('account');
-    this.logger.log(`queryBuilder query: ${JSON.stringify(query)}`);
     query.leftJoinAndSelect('account.user', 'users');
     query.leftJoinAndSelect('account.company', 'company');
     query.where('account.deleted=false');
