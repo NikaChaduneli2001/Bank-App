@@ -220,20 +220,20 @@ export class TransactionMysqlService {
     this.logger.log(`get all transactions result : ${JSON.stringify(result)}`);
     if (result) {
       return result.map((res) => ({
-        id: res.transaction.id,
+        id: res.transaction_id,
         sender: {
-          fullName: res.sender.fullName,
-          account: res.sender.account,
+          fullName: res.sender_fullName,
+          account: res.sender_account,
         },
         receiver: {
-          fullName: res.receiver.fullName,
-          account: res.receiver.account,
+          fullName: res.receiver_fullName,
+          account: res.receiver_account,
         },
-        balance: res.transaction.balance,
-        description: res.transaction.description,
-        time: res.transaction.time,
-        status: res.transaction.status,
-        type: res.transaction.type,
+        balance: res.transaction_balance,
+        description: res.transaction_description,
+        time: res.transaction_time,
+        status: res.transaction_status,
+        type: res.transaction_type,
       }));
     } else {
       this.logger.error(
