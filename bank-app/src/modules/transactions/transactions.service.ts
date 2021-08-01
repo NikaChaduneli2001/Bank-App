@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { createTransactionDto } from 'src/dto/create-transaction.dto';
 import { fillBlanaceDto } from 'src/dto/fill-balance.dto';
 import { getAllTransactiosDto } from 'src/dto/get-all-transactios.dto';
@@ -9,6 +9,7 @@ import { TransactionMysqlService } from 'src/repositories/transaction/trasaction
 
 @Injectable()
 export class TransactionsService {
+  private readonly logger = new Logger(TransactionsService.name);
   constructor(private readonly transactionRepo: TransactionMysqlService) {}
 
   async belongsToUser(transactionId: number, userId: number) {
@@ -22,11 +23,13 @@ export class TransactionsService {
     }
   }
   async createTrnasaction(data: createTransactionDto) {
+    this.logger.log(`crete transactions data :${JSON.stringify(data)}`);
     try {
       const sameOwner = await this.transactionRepo.sameOwner(
         data.senderId,
         data.receiverId,
       );
+      this.logger.log(`same Owner :${JSON.stringify(sameOwner)}`);
       data.type = sameOwner
         ? TransactionType.Transfer
         : TransactionType.Private;
@@ -35,12 +38,19 @@ export class TransactionsService {
         data,
         sameOwner,
       );
+      this.logger.log(`new transactions : ${JSON.stringify(newTransaction)}`);
 
       const balancig = await this.transactionRepo.transactionsBetweenUsers(
         newTransaction,
       );
+      this.logger.log(`balancig :${JSON.stringify(balancig)}`);
       return { newTransaction, balancig };
-    } catch {
+    } catch (error) {
+      this.logger.error(
+        `could not created transactions with given params :${JSON.stringify(
+          data,
+        )}, error: ${error}`,
+      );
       return null;
     }
   }
@@ -54,7 +64,7 @@ export class TransactionsService {
   }
   async getSenderTransactionsWithSenderId(senderId: number) {
     try {
-      return await this.transactionRepo.getSenderTransactionsWithSenderId(
+      return await this.transactionRepo.getSendersTransactionsWithSenderId(
         senderId,
       );
     } catch {
@@ -87,13 +97,22 @@ export class TransactionsService {
   }
 
   async transferIntoAccount(data: fillBlanaceDto) {
+    this.logger.log(
+      `transafer into account fill balance Dto: ${JSON.stringify(data)}`,
+    );
     try {
       data.type = TransactionType.Transfer;
+      this.logger.log(`data type: ${JSON.stringify(data.type)}`);
       const newDeposit = await this.transactionRepo.transferIntoAccount(data);
+      this.logger.log(`new Deposit: ${JSON.stringify(newDeposit)}`);
       data.amount = Math.abs(data.amount);
+      this.logger.log(`amount: ${JSON.stringify(data.amount)}`);
       await this.transactionRepo.fillBalance(data);
       return newDeposit;
-    } catch {
+    } catch (error) {
+      this.logger.error(
+        `Transfer cannot be done with given data :${JSON.stringify(data)}`,
+      );
       return null;
     }
   }
