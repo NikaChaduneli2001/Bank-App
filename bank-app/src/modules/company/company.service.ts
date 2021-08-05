@@ -10,7 +10,11 @@ export class CompanyService {
 
   async registerComapany(data: registerCompanyDto) {
     try {
-      return await this.companyRepo.registerCompany(data);
+      const registerCompany = await this.companyRepo.registerCompany(data);
+      if (!registerCompany) {
+        return false;
+      }
+      return registerCompany;
     } catch {
       return null;
     }
@@ -18,7 +22,8 @@ export class CompanyService {
 
   async getCompanies(data: getAllCompanyDto) {
     try {
-      return await this.companyRepo.getAllCompany(data);
+      const companies = await this.companyRepo.getAllCompany(data);
+      if (!companies) throw new Error('companies not found');
     } catch {
       return null;
     }
@@ -26,7 +31,11 @@ export class CompanyService {
 
   async getOneCompany(id: number) {
     try {
-      return await this.companyRepo.getOneCompany(id);
+      const findOneCompany = await this.companyRepo.getOneCompany(id);
+      if (!findOneCompany) {
+        return false;
+      }
+      return findOneCompany;
     } catch {
       return null;
     }
@@ -34,7 +43,9 @@ export class CompanyService {
 
   async deletedCompany(id: number) {
     try {
-      return await this.companyRepo.deletedCompany(id);
+      const deleted = await this.companyRepo.deletedCompany(id);
+      if (!deleted) throw new Error('company not deleted');
+      return deleted;
     } catch {
       return null;
     }
@@ -42,7 +53,11 @@ export class CompanyService {
 
   async updateCompany(id: number, data: CompanyInterface) {
     try {
-      return await this.companyRepo.updateCompany(id, data);
+      const updated = await this.companyRepo.updateCompany(id, data);
+      if (!updated) {
+        throw new Error('company not updated');
+      }
+      return updated;
     } catch {
       return null;
     }
