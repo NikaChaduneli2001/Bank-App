@@ -57,16 +57,23 @@ export class TransactionsService {
 
   async getAllTransactios(data: getAllTransactiosDto) {
     try {
-      return await this.transactionRepo.getAllTransactios(data);
+      const transactions = await this.transactionRepo.getAllTransactios(data);
+      if (!transactions) {
+        return false;
+      }
+      return transactions;
     } catch {
       return null;
     }
   }
   async getSenderTransactionsWithSenderId(senderId: number) {
     try {
-      return await this.transactionRepo.getSendersTransactionsWithSenderId(
-        senderId,
-      );
+      const senderTrnsactions =
+        await this.transactionRepo.getSendersTransactionsWithSenderId(senderId);
+      if (!senderTrnsactions) {
+        return false;
+      }
+      return senderTrnsactions;
     } catch {
       return null;
     }
@@ -74,7 +81,11 @@ export class TransactionsService {
 
   async deleteTransactions(transactionId: number) {
     try {
-      return await this.transactionRepo.deleteTransactions(transactionId);
+      const deleted = await this.transactionRepo.deleteTransactions(
+        transactionId,
+      );
+      if (!deleted) throw new Error('transaction was not deleted');
+      return deleted;
     } catch {
       return null;
     }
@@ -82,7 +93,13 @@ export class TransactionsService {
 
   async updateTransactionStatus(id: number, status: TransactionStatus) {
     try {
-      return await this.transactionRepo.updateTransactionStatus(id, status);
+      const updated = await this.transactionRepo.updateTransactionStatus(
+        id,
+        status,
+      );
+      if (!updated)
+        throw new Error('transaction was not updated transaction status');
+      return updated;
     } catch {
       return null;
     }
@@ -90,7 +107,12 @@ export class TransactionsService {
 
   async updateTransaction(id: number, update: TransactionInterface) {
     try {
-      return await this.transactionRepo.updateTransaction(id, update);
+      const updatedTransaction = await this.transactionRepo.updateTransaction(
+        id,
+        update,
+      );
+      if (!updatedTransaction)
+        throw new Error('transaction was not updated transaction');
     } catch {
       return null;
     }
@@ -101,14 +123,20 @@ export class TransactionsService {
       `transafer into account fill balance Dto: ${JSON.stringify(data)}`,
     );
     try {
-      data.type = TransactionType.Transfer;
-      this.logger.log(`data type: ${JSON.stringify(data.type)}`);
-      const newDeposit = await this.transactionRepo.transferIntoAccount(data);
-      this.logger.log(`new Deposit: ${JSON.stringify(newDeposit)}`);
-      data.amount = Math.abs(data.amount);
-      this.logger.log(`amount: ${JSON.stringify(data.amount)}`);
-      await this.transactionRepo.fillBalance(data);
-      return newDeposit;
+      if ((data.type = TransactionType.Transfer)) {
+        this.logger.log(`data type: ${JSON.stringify(data.type)}`);
+        const newDeposit = await this.transactionRepo.transferIntoAccount(data);
+        if (!newDeposit) {
+          return false;
+        }
+        this.logger.log(`new Deposit: ${JSON.stringify(newDeposit)}`);
+        data.amount = Math.abs(data.amount);
+        this.logger.log(`amount: ${JSON.stringify(data.amount)}`);
+        await this.transactionRepo.fillBalance(data);
+        return newDeposit;
+      } else {
+        return false;
+      }
     } catch (error) {
       this.logger.error(
         `Transfer cannot be done with given data :${JSON.stringify(data)}`,
