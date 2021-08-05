@@ -27,6 +27,9 @@ export class UsersService {
     try {
       const result = await this.usersRepo.registerUser(data);
       this.logger.log(`registered user ${JSON.stringify(result)}`);
+      if (!result) {
+        return false;
+      }
       return result;
     } catch (error) {
       this.logger.error(
@@ -42,6 +45,9 @@ export class UsersService {
         personalNumber,
       );
       this.logger.log(`find user: ${JSON.stringify(findUser)}`);
+      if (!findUser) {
+        return false;
+      }
       return findUser;
     } catch (error) {
       this.logger.error(
@@ -62,6 +68,9 @@ export class UsersService {
         password,
       );
       this.logger.log(`found user :${JSON.stringify(findUser)}`);
+      if (!findUser) {
+        return false;
+      }
       return findUser;
     } catch (error) {
       this.logger.error(
@@ -81,6 +90,9 @@ export class UsersService {
         personalNumber,
       );
       this.logger.log(`found user: ${JSON.stringify(foundUser)}`);
+      if (!foundUser) {
+        return false;
+      }
       return foundUser;
     } catch (error) {
       this.logger.error(
@@ -97,6 +109,7 @@ export class UsersService {
     try {
       const getUsers = await this.usersRepo.getAllUser(data);
       this.logger.log(`get all users: ${JSON.stringify(getUsers)}`);
+      if (!getUsers) throw new Error('users not found');
       return getUsers;
     } catch (error) {
       this.logger.error(
@@ -111,6 +124,9 @@ export class UsersService {
     try {
       const deletedUser = await this.usersRepo.deleteUser(Number(id));
       this.logger.log(`deleted user: ${JSON.stringify(deletedUser)}`);
+      if (!deletedUser) {
+        return false;
+      }
       return deletedUser;
     } catch (error) {
       this.logger.error(
@@ -129,6 +145,7 @@ export class UsersService {
     try {
       const updatedUser = await this.usersRepo.updateUser(Number(id), data);
       this.logger.log(`updated user with id ${JSON.stringify(updatedUser)}`);
+      if (!updatedUser) throw new Error('updated user not found');
       return updatedUser;
     } catch (error) {
       this.logger.error(
