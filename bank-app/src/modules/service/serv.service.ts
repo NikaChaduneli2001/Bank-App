@@ -13,6 +13,7 @@ export class ServiceService {
   async createService(data: createServiceDto) {
     try {
       const account = await this.serviceRepo.createService(data);
+      if (!account) throw new Error('service not created');
       return account;
     } catch {
       return null;
@@ -21,7 +22,9 @@ export class ServiceService {
 
   async getAllServices(data: getAllServicesDto) {
     try {
-      return await this.serviceRepo.getAllServices(data);
+      const services = await this.serviceRepo.getAllServices(data);
+      if (!services) throw new Error('service not found');
+      return services;
     } catch {
       return null;
     }
@@ -29,7 +32,9 @@ export class ServiceService {
 
   async deleteService(id: number) {
     try {
-      return await this.serviceRepo.deleteService(id);
+      const deleted = await this.serviceRepo.deleteService(id);
+      if (!deleted) throw new Error('service not deleted');
+      return deleted;
     } catch {
       return null;
     }
@@ -37,7 +42,9 @@ export class ServiceService {
 
   async updateService(id: number, data: updateServiceDto) {
     try {
-      return await this.serviceRepo.updateService(id, data);
+      const updated = await this.serviceRepo.updateService(id, data);
+      if (!updated) throw new Error('service not updated');
+      return updated;
     } catch {
       return null;
     }
