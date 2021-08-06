@@ -33,12 +33,13 @@ export class CompanyMysqlService {
     }
   }
 
-  async registerCompany(data: registerCompanyDto) {
+  async registerCompany(data: registerCompanyDto): Promise<any> {
     this.logger.log(`register company data :${JSON.stringify(data)}`);
     const newCompany: CompanyEntity = new CompanyEntity();
     newCompany.companyName = data.companyName;
     newCompany.email = data.email;
     newCompany.user = data.user;
+
     const findUser = await this.usersRepository.findOne(data.user);
     if (findUser.email !== data.email) {
       return false;

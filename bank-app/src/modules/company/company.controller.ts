@@ -51,7 +51,7 @@ export class CompanyController {
           data,
         )}. error: ${error}`,
       );
-      return getErrorMessage('Could not register company with given paramს');
+      return getErrorMessage('Could not register company with given params');
     }
   }
   @Get()

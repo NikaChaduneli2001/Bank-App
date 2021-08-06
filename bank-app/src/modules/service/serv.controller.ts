@@ -24,7 +24,7 @@ import { RolesGuard } from '../auth/roles.guard';
 
 import { ServiceService } from './serv.service';
 
-@Controller('accounts')
+@Controller('services')
 export class ServiceController {
   private readonly logger = new Logger(ServiceController.name);
   constructor(private readonly serviceService: ServiceService) {}

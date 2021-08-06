@@ -12,8 +12,7 @@ import { UsersEntity } from './users.entity';
 export class CompanyEntity {
   @PrimaryGeneratedColumn()
   id: number;
-  @Column({
-    type: 'varchar',
+  @Column('varchar', {
     length: 100,
   })
   companyName: string;
